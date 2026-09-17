@@ -33,7 +33,7 @@ Manual monitoring can take more time to identify problems and assign maintenance
 - VS Code / Code::Blocks – Development
 - Git & GitHub – Version control and collaboration
 
-##Major Features / Modules
+## Major Features / Modules
 1. Energy & Load Management
 Handles simulated energy generation and electricity demand. Loads are given different priorities so important loads can be managed first when available power is limited.
 
@@ -49,7 +49,7 @@ Represents grid locations and routes as a graph and uses Dijkstra's Algorithm to
 5. Web Dashboard
 Provides a simple interface to view energy generation, demand, grid status, faults, and repair team information.
 
-##Current Project Status
+## Current Project Status
 
 Phase I – Architecture & Core Logic
 
