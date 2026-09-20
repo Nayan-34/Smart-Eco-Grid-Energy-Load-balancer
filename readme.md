@@ -49,6 +49,16 @@ Represents grid locations and routes as a graph and uses Dijkstra's Algorithm to
 5. Web Dashboard
 Provides a simple interface to view energy generation, demand, grid status, faults, and repair team information.
 
+##Project Setup
+
+1. Clone or download the repository.
+2. Open the project folder in VS Code or any suitable IDE.
+3. Compile and run the C++ backend using a C++ compiler.
+4. Open the frontend in a web browser or run it using a local development server.
+5. Enter the required data manually or use the sample data provided to test the system.
+
+The project currently uses simulated/sample data instead of real physical grid sensors
+
 ## Current Project Status
 
 Phase I – Architecture & Core Logic
