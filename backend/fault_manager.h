@@ -22,10 +22,13 @@ public:
     FaultType type;
     double voltage;
     double load;
+    string severity;
     bool active;
 
     Fault(int id, string location, FaultType type,
           double voltage, double load);
+    
+    void setSeverity();
 };
 
 class FaultManager

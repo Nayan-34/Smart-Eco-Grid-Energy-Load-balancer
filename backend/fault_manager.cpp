@@ -10,8 +10,42 @@ Fault::Fault(int id, string location, FaultType type,
     this->voltage = voltage;
     this->load = load;
     active = true;
+
+    // Set severity of fault
+    setSeverity();
 }
 
+
+// Set severity of fault
+void Fault::setSeverity()
+{
+    if (type == LOW_VOLTAGE)
+    {
+        if (voltage < 190)
+        {
+            severity = "High";
+        }
+        else
+        {
+            severity = "Medium";
+        }
+    }
+    else if (type == OVERLOAD)
+    {
+        if (load > 150)
+        {
+            severity = "High";
+        }
+        else
+        {
+            severity = "Medium";
+        }
+    }
+    else
+    {
+        severity = "Low";
+    }
+}
 
 // Check the grid for faults
 void FaultManager::checkFault(int id, string location,
@@ -72,6 +106,10 @@ void FaultManager::showFaults()
 
         cout << "Load     : "
              << faults[i].load << " MW" << endl;
+
+        cout << "Severity : "
+             << faults[i].severity << endl;
+
 
         if (faults[i].active == true)
         {
