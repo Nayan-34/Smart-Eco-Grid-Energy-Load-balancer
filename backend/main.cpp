@@ -1,7 +1,7 @@
 #include <iostream>
 #include "energy_load.h"
 #include "fault_manager.h"
-
+#include "route_optimizer.h"
 using namespace std;
 
 int main()
@@ -27,7 +27,7 @@ int main()
     manager.processGrid(grid);
 
 
-    // Fault Management
+    
     FaultManager faultManager;
 
     faultManager.checkFault(
@@ -40,5 +40,15 @@ int main()
 
     faultManager.showFaults();
     
+     RouteOptimizer route(4);
+
+    route.addConnection(0, 1, 10);
+    route.addConnection(0, 2, 20);
+    route.addConnection(1, 3, 5);
+    route.addConnection(2, 3, 8);
+
+    route.findShortestRoute(0, 3);
+
     return 0;
+    
 }
