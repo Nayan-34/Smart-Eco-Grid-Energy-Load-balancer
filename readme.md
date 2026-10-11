@@ -18,7 +18,7 @@ Manual monitoring can take more time to identify problems and assign maintenance
 - Display grid information and fault alerts through an interactive web dashboard.
 
 ## Team Members
-- Shivangi Rana – Team Lead & Backend Developer
+- Shivangi Rana – Team Lead & Frontend Developer
 - Nayan Thapliyal – Frontend Developer & Tester
 - Sanchi Aggrawal – Backend Developer
 - Shikha Dhabral – Backend & Module Integration
