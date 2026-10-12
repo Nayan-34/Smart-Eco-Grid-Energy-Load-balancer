@@ -1,28 +1,34 @@
+
 #ifndef ENERGY_LOAD_H
 #define ENERGY_LOAD_H
 
 #include <iostream>
-#include <queue>
 #include <string>
-#include <vector>
-
 using namespace std;
 
-enum PriorityLevel { LOW = 1, MEDIUM = 2, HIGH = 3 };
+const int MAX_CONSUMERS = 100;
 
-class Consumer {
+enum PriorityLevel
+{
+    LOW = 1,
+    MEDIUM = 2,
+    HIGH = 3
+};
+
+class Consumer
+{
 public:
     string id;
     PriorityLevel priority;
     double powerRequired;
     double powerAllocated;
 
+    Consumer();
     Consumer(string id, PriorityLevel priority, double powerRequired);
-
-    bool operator<(const Consumer& other) const;
 };
 
-class GridNode {
+class GridNode
+{
 public:
     double incomingPower;
     double batteryCapacity_kWh;
@@ -33,15 +39,19 @@ public:
              double maxDischarge_kW = 1000.0);
 };
 
-class LoadManager {
+class LoadManager
+{
 private:
-    priority_queue<Consumer> consumerQueue;
-    vector<Consumer> processedConsumers;
-    double totalAllocatedPower_kW;
+    Consumer consumers[MAX_CONSUMERS];
+    int count;
 
 public:
-    void addConsumer(const Consumer& c);
+    Consumer processedConsumers[MAX_CONSUMERS];
+    int processedCount;
+    double totalAllocatedPower_kW;
 
+    LoadManager();
+    void addConsumer(const Consumer& c);
     void processGrid(GridNode& grid);
 };
 
