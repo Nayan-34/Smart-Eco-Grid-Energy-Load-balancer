@@ -1,6 +1,17 @@
 
 #include "energy_load.h"
 
+double allocatePower(double availablePower, double requiredPower)
+{
+    if (availablePower <= 0 || requiredPower <= 0)
+        return 0;
+
+    if (availablePower >= requiredPower)
+        return requiredPower;
+
+    return availablePower;
+}
+
 Consumer::Consumer()
 {
     id = "";
@@ -23,6 +34,7 @@ GridNode::GridNode(double incoming_kW, double capacity_kWh,
     incomingPower = incoming_kW;
     batteryCapacity_kWh = capacity_kWh;
     maxBatteryDischargeRate = maxDischarge_kW;
+
     totalAvailablePower_kW = incomingPower + maxBatteryDischargeRate;
 }
 
@@ -72,18 +84,9 @@ void LoadManager::processGrid(GridNode& grid)
 
         count--;
 
-        if (grid.totalAvailablePower_kW >= current.powerRequired)
-        {
-            current.powerAllocated = current.powerRequired;
-        }
-        else if (grid.totalAvailablePower_kW > 0)
-        {
-            current.powerAllocated = grid.totalAvailablePower_kW;
-        }
-        else
-        {
-            current.powerAllocated = 0;
-        }
+        current.powerAllocated =
+            allocatePower(grid.totalAvailablePower_kW,
+                          current.powerRequired);
 
         grid.totalAvailablePower_kW -= current.powerAllocated;
         totalAllocatedPower_kW += current.powerAllocated;
