@@ -1,6 +1,14 @@
+
 #include "energy_load.h"
 
-// Constructor for Consumer
+Consumer::Consumer()
+{
+    id = "";
+    priority = LOW;
+    powerRequired = 0;
+    powerAllocated = 0;
+}
+
 Consumer::Consumer(string id, PriorityLevel priority, double powerRequired)
 {
     this->id = id;
@@ -9,66 +17,78 @@ Consumer::Consumer(string id, PriorityLevel priority, double powerRequired)
     powerAllocated = 0;
 }
 
-// Used by priority queue to compare consumers
-bool Consumer::operator<(const Consumer& other) const
-{
-    return priority < other.priority;
-}
-
-// Constructor for GridNode
 GridNode::GridNode(double incoming_kW, double capacity_kWh,
                    double maxDischarge_kW)
 {
     incomingPower = incoming_kW;
     batteryCapacity_kWh = capacity_kWh;
     maxBatteryDischargeRate = maxDischarge_kW;
-
-    totalAvailablePower_kW =
-        incomingPower + maxBatteryDischargeRate;
+    totalAvailablePower_kW = incomingPower + maxBatteryDischargeRate;
 }
 
-// Add consumer to priority queue
+LoadManager::LoadManager()
+{
+    count = 0;
+    processedCount = 0;
+    totalAllocatedPower_kW = 0;
+}
+
 void LoadManager::addConsumer(const Consumer& c)
 {
-    consumerQueue.push(c);
+    if (count < MAX_CONSUMERS)
+    {
+        consumers[count] = c;
+        count++;
+    }
+    else
+    {
+        cout << "Queue is full" << endl;
+    }
 }
 
-// Distribute power according to priority
 void LoadManager::processGrid(GridNode& grid)
 {
-    processedConsumers.clear();
+    processedCount = 0;
     totalAllocatedPower_kW = 0;
 
-    while (!consumerQueue.empty())
+    while (count > 0)
     {
-        Consumer current = consumerQueue.top();
-        consumerQueue.pop();
+        int highest = 0;
+
+        for (int i = 1; i < count; i++)
+        {
+            if (consumers[i].priority > consumers[highest].priority)
+            {
+                highest = i;
+            }
+        }
+
+        Consumer current = consumers[highest];
+
+        for (int i = highest; i < count - 1; i++)
+        {
+            consumers[i] = consumers[i + 1];
+        }
+
+        count--;
 
         if (grid.totalAvailablePower_kW >= current.powerRequired)
         {
-            // Enough power is available
             current.powerAllocated = current.powerRequired;
-
-            grid.totalAvailablePower_kW =
-                grid.totalAvailablePower_kW - current.powerRequired;
         }
         else if (grid.totalAvailablePower_kW > 0)
         {
-            // Only some power is available
-            current.powerAllocated =
-                grid.totalAvailablePower_kW;
-
-            grid.totalAvailablePower_kW = 0;
+            current.powerAllocated = grid.totalAvailablePower_kW;
         }
         else
         {
-            // No power is available
             current.powerAllocated = 0;
         }
 
-        totalAllocatedPower_kW =
-            totalAllocatedPower_kW + current.powerAllocated;
+        grid.totalAvailablePower_kW -= current.powerAllocated;
+        totalAllocatedPower_kW += current.powerAllocated;
 
-        processedConsumers.push_back(current);
+        processedConsumers[processedCount] = current;
+        processedCount++;
     }
 }
