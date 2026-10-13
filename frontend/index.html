@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Eco-Grid Management System</title>
-    <link rel="stylesheet" href="1.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -416,3 +416,27 @@
                 </p>
             </div>
         </section>
+        <!-- Keeps a record of actions performed during the simulation -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">SYSTEM LOG</p>
+                    <h2>Recent Activity</h2>
+                    <p>Actions performed during the current simulation.</p>
+                </div>
+                <button type="button" id="clearActivity" class="button-outline button-small">Clear Log</button>
+            </div>
+            <div id="activityList" class="activity-list"></div>
+        </section>
+    </main>
+
+    <!-- Dashboard footer -->
+    <footer>
+        <strong>Smart Eco-Grid Management System</strong>
+        <p>Energy &amp; Load Management Dashboard</p>
+    </footer>
+
+    <!-- Loads the JavaScript that handles dashboard interactions -->
+    <script src="script.js"></script>
+</body>
+</html>
