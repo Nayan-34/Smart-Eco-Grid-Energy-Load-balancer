@@ -166,3 +166,72 @@
                     aria-label="Horizontal bar chart comparing energy generation and demand"></canvas>
             </div>
         </section>
+                <!-- Follows the simulated power flow from generation to connected loads -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">ELECTRICITY DISTRIBUTION</p>
+                    <h2>Power Flow</h2>
+                    <p>Follow power from generation to the connected loads.</p>
+                </div>
+            </div>
+
+            <div class="flow-layout">
+                <div class="flow-stage generation-stage">
+                    <span class="stage-number">01</span>
+                    <h3>Generation</h3>
+                    <strong id="flowGeneration">2500 kW</strong>
+                    <p>Solar, hydro and wind</p>
+                </div>
+                <div class="flow-connector"><span>↓</span></div>
+                <div class="flow-stage transformer-stage">
+                    <span class="stage-number">02</span>
+                    <h3>Transformer</h3>
+                    <strong id="flowTransformer">2500 kW</strong>
+                    <p>Power transfer stage</p>
+                </div>
+                <div class="flow-connector"><span>↓</span></div>
+                <div class="flow-stage distribution-stage">
+                    <span class="stage-number">03</span>
+                    <h3>Distribution</h3>
+                    <strong id="flowDistributed">2200 kW</strong>
+                    <p>Power supplied to loads</p>
+                </div>
+                <div class="flow-connector"><span>↓</span></div>
+
+                <!-- JavaScript adds the connected load cards here -->
+                <div class="flow-loads" id="flowLoads">
+                    <!-- Load cards are added by JavaScript -->
+                </div>
+            </div>
+
+            <p class="small-text flow-note">
+                This diagram represents the project's simulated power flow, not a live electrical connection.
+            </p>
+        </section>
+
+        <!-- Summary of the power requested and supplied to connected loads -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">LOAD MONITORING</p>
+                    <h2>Energy and Load Management</h2>
+                    <p>Compare requested power with the power actually supplied.</p>
+                </div>
+            </div>
+
+            <!-- Quick totals for load requirements and power allocation -->
+            <div class="load-summary">
+                <div>
+                    <span>Total Required</span>
+                    <strong id="totalRequired">2200 kW</strong>
+                </div>
+                <div>
+                    <span>Total Supplied</span>
+                    <strong id="totalSupplied">2200 kW</strong>
+                </div>
+                <div>
+                    <span>Limited Loads</span>
+                    <strong id="limitedLoads">0</strong>
+                </div>
+            </div>
