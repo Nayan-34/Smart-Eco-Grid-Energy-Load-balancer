@@ -86,3 +86,83 @@
                 </div>
             </div>
         </section>
+<!-- Controls for starting, pausing and resetting the simulation -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">CONTROL PANEL</p>
+                    <h2>Grid Simulation</h2>
+                    <p>Start, pause or reset the simulated readings.</p>
+                </div>
+            </div>
+
+            <div class="simulation-panel">
+                <div class="simulation-buttons">
+                    <button type="button" id="startSimulation">Start Simulation</button>
+                    <button type="button" id="pauseSimulation" class="button-secondary" disabled>Pause</button>
+                    <button type="button" id="resetSimulation" class="button-outline">Reset Values</button>
+                </div>
+                <p id="simulationMessage" class="small-text">Simulation is currently paused.</p>
+            </div>
+        </section>
+
+        <!-- Shows how much power comes from each renewable source -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">RENEWABLE SOURCES</p>
+                    <h2>Energy Generation</h2>
+                    <p>Compare the contribution of each energy source.</p>
+                </div>
+                <span class="unit-label">Unit: kW</span>
+            </div>
+
+            <!-- Individual readings for solar, hydro and wind -->
+            <div class="source-grid">
+                <article class="source-card">
+                    <div class="source-icon">S</div>
+                    <div>
+                        <h3>Solar</h3>
+                        <strong id="solarGeneration">1000 kW</strong>
+                    </div>
+                </article>
+                <article class="source-card">
+                    <div class="source-icon">H</div>
+                    <div>
+                        <h3>Hydro</h3>
+                        <strong id="hydroGeneration">800 kW</strong>
+                    </div>
+                </article>
+                <article class="source-card">
+                    <div class="source-icon">W</div>
+                    <div>
+                        <h3>Wind</h3>
+                        <strong id="windGeneration">700 kW</strong>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Chart for comparing the three energy sources -->
+            <div class="chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <h3>Generation by Source</h3>
+                        <p>Horizontal comparison of renewable energy output.</p>
+                    </div>
+                </div>
+                <canvas id="generationChart" role="img"
+                    aria-label="Horizontal bar chart showing solar, hydro and wind generation"></canvas>
+            </div>
+
+            <!-- Chart comparing total generation with current demand -->
+            <div class="chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <h3>Generation vs. Demand</h3>
+                        <p>Check whether the current generation can meet demand.</p>
+                    </div>
+                </div>
+                <canvas id="generationDemandChart" role="img"
+                    aria-label="Horizontal bar chart comparing energy generation and demand"></canvas>
+            </div>
+        </section>
