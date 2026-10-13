@@ -1,1 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Eco-Grid Management System</title>
+    <link rel="stylesheet" href="1.css">
+</head>
+<body>
 
+    <!-- Main heading and current simulation status -->
+    <header class="main-header">
+        <div>
+            <p class="eyebrow">POWER GRID MONITORING</p>
+            <h1>Smart Eco-Grid Management System</h1>
+            <p class="header-subtitle">Energy monitoring, load management and fault handling</p>
+        </div>
+        <div class="header-status">
+            <span class="live-dot"></span>
+            <span>Simulation Mode</span>
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <!-- A reminder that the dashboard uses simulated readings -->
+        <div class="notice">
+            <strong>Prototype notice:</strong>
+            The project currently uses sample and simulated data for testing.
+            It does not use real-time data from physical grid sensors.
+        </div>
+
+        <!-- Main grid readings and the current power balance -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">AT A GLANCE</p>
+                    <h2>Grid Overview</h2>
+                    <p>Current generation, demand and grid condition.</p>
+                </div>
+                <span class="time-label" id="lastUpdated">Waiting for update</span>
+            </div>
+
+            <!-- Four cards showing the main grid readings -->
+            <div class="overview-grid">
+                <article class="metric-card">
+                    <span class="metric-label">Total Generation</span>
+                    <strong class="metric-value" id="generationValue">2500 kW</strong>
+                    <span class="metric-note">Solar + Hydro + Wind</span>
+                </article>
+
+                <article class="metric-card">
+                    <span class="metric-label">Current Demand</span>
+                    <strong class="metric-value" id="demandValue">2200 kW</strong>
+                    <span class="metric-note">Power required by the grid</span>
+                </article>
+
+                <article class="metric-card">
+                    <span class="metric-label">Power Balance</span>
+                    <strong class="metric-value" id="availablePower">+300 kW</strong>
+                    <span class="metric-note" id="balanceLabel">Surplus power</span>
+                </article>
+
+                <article class="metric-card">
+                    <span class="metric-label">Grid Condition</span>
+                    <strong class="metric-value status-text" id="gridStatus">Normal</strong>
+                    <span class="metric-note" id="gridMessage">Generation meets demand</span>
+                </article>
+            </div>
+
+            <!-- Visual bar showing generation compared with demand -->
+            <div class="balance-panel">
+                <div class="balance-top">
+                    <div>
+                        <h3>Generation and Demand Balance</h3>
+                        <p id="balanceInsight">Generation is currently higher than demand.</p>
+                    </div>
+                    <span id="balanceBadge" class="status-badge status-good">SURPLUS</span>
+                </div>
+                <div class="balance-track">
+                    <div id="balanceBar" class="balance-fill"></div>
+                </div>
+                <div class="balance-legend">
+                    <span>0 kW</span>
+                    <span id="balanceScale">2500 kW generation</span>
+                </div>
+            </div>
+        </section>
