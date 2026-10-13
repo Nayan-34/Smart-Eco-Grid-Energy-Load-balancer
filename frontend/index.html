@@ -281,3 +281,85 @@
             </form>
             <p class="small-text">Priority 3 is highest; priority 1 is lowest.</p>
         </div>
+                    <!-- Lists the loads and their current allocation status -->
+        <div class="table-card">
+            <div class="table-heading">
+                <h3>Connected Loads</h3>
+                <span id="loadCount">4 loads</span>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Load</th>
+                            <th>Priority</th>
+                            <th>Required</th>
+                            <th>Supplied</th>
+                            <th>Allocation</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loadTable"></tbody>
+                </table>
+            </div>
+        </div>
+        </section>
+
+        <!-- Form and status panel for reporting grid faults -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">FAULT RESPONSE</p>
+                    <h2>Fault Management</h2>
+                    <p>Report a simulated fault and find a suitable repair team.</p>
+                </div>
+            </div>
+
+            <div class="fault-layout">
+                <!-- Select the fault type, location and severity -->
+                <div class="form-card">
+                    <h3>Report a Fault</h3>
+                    <form id="faultForm" class="form-grid one-column">
+                        <div class="form-group">
+                            <label for="faultType">Fault Type</label>
+                            <select id="faultType" required>
+                                <option value="Transmission Line">Transmission Line</option>
+                                <option value="Transformer">Transformer</option>
+                                <option value="Distribution Line">Distribution Line</option>
+                                <option value="Power Supply">Power Supply</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="faultLocation">Fault Location</label>
+                            <select id="faultLocation" required>
+                                <option value="Substation A">Substation A</option>
+                                <option value="Substation B" selected>Substation B</option>
+                                <option value="Substation C">Substation C</option>
+                                <option value="Substation D">Substation D</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="faultSeverity">Severity</label>
+                            <select id="faultSeverity" required>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <button type="submit">Report and Find Route</button>
+                    </form>
+                </div>
+
+                <!-- Shows the details of the currently reported fault -->
+                <div class="fault-status-card">
+                    <div class="card-topline">
+                        <h3>Current Fault</h3>
+                        <span id="faultBadge" class="status-badge status-warning">Reported</span>
+                    </div>
+                    <p><span>Fault Type</span><strong id="currentFaultType">Transmission Line</strong></p>
+                    <p><span>Location</span><strong id="currentFaultLocation">Substation B</strong></p>
+                    <p><span>Severity</span><strong id="currentFaultSeverity">High</strong></p>
+                </div>
+            </div>
+        </section>
