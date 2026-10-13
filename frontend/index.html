@@ -363,3 +363,56 @@
                 </div>
             </div>
         </section>
+<!-- Shows which repair teams are available or busy -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">MAINTENANCE</p>
+                    <h2>Repair Teams and Route</h2>
+                    <p>The closest available team is selected using the shortest route.</p>
+                </div>
+            </div>
+
+            <div class="team-grid" id="teamGrid">
+                <article class="team-card">
+                    <h3>Team A</h3>
+                    <p>Available for assignment</p>
+                    <span class="status-badge status-good">Available</span>
+                </article>
+                <article class="team-card">
+                    <h3>Team B</h3>
+                    <p>Available for assignment</p>
+                    <span class="status-badge status-good">Available</span>
+                </article>
+                <article class="team-card">
+                    <h3>Team C</h3>
+                    <p>Currently occupied</p>
+                    <span class="status-badge status-warning">Busy</span>
+                </article>
+            </div>
+
+            <!-- Displays the team and route chosen for a reported fault -->
+            <div class="route-card">
+                <div class="card-topline">
+                    <h3>Recommended Repair Route</h3>
+                    <span id="routeStatus" class="status-badge status-neutral">Waiting</span>
+                </div>
+                <div class="route-details">
+                    <div>
+                        <span>Selected Team</span>
+                        <strong id="selectedTeam">Not selected</strong>
+                    </div>
+                    <div>
+                        <span>Route Distance</span>
+                        <strong id="routeDistance">--</strong>
+                    </div>
+                </div>
+                <div class="route-path">
+                    <span>Route</span>
+                    <strong id="repairRoute">Report a fault to calculate the route.</strong>
+                </div>
+                <p class="small-text">
+                    The route uses a weighted graph and Dijkstra's Algorithm. Distances are sample values.
+                </p>
+            </div>
+        </section>
