@@ -235,3 +235,49 @@
                     <strong id="limitedLoads">0</strong>
                 </div>
             </div>
+<!-- Compares the power each load needs with the power it receives -->
+        <div class="chart-card">
+            <div class="chart-heading">
+                <div>
+                    <h3>Required vs. Supplied by Load</h3>
+                    <p>Each pair of horizontal bars shows demand and allocation.</p>
+                </div>
+            </div>
+            <canvas id="loadAllocationChart" role="img"
+                aria-label="Horizontal bar chart comparing required and supplied power for each load"></canvas>
+
+            <!-- Explains the two values shown in the chart -->
+            <div class="chart-legend">
+                <span><i class="legend-dot required-dot"></i>Required</span>
+                <span><i class="legend-dot supplied-dot"></i>Supplied</span>
+            </div>
+        </div>
+
+        <!-- Form for adding another load to the simulation -->
+        <div class="form-card">
+            <h3>Add a New Load</h3>
+            <p class="form-description">Enter a load and its priority to include it in the simulation.</p>
+
+            <form id="loadForm" class="form-grid">
+                <div class="form-group">
+                    <label for="loadName">Load Name</label>
+                    <input id="loadName" type="text" placeholder="e.g. Water Pump" required maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="loadPower">Required Power (kW)</label>
+                    <input id="loadPower" type="number" min="1" max="100000" placeholder="e.g. 250" required>
+                </div>
+                <div class="form-group">
+                    <label for="loadPriority">Priority</label>
+                    <select id="loadPriority" required>
+                        <option value="3">3 - Critical</option>
+                        <option value="2">2 - Important</option>
+                        <option value="1">1 - Normal</option>
+                    </select>
+                </div>
+                <div class="form-button">
+                    <button type="submit">Add Load</button>
+                </div>
+            </form>
+            <p class="small-text">Priority 3 is highest; priority 1 is lowest.</p>
+        </div>
