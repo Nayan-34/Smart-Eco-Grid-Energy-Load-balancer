@@ -1,1 +1,88 @@
+/* Base styles, theme colours and buttons */
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --green-dark: #26352d;
+    --green: #4f7657;
+    --green-mid: #789b7d;
+    --green-light: #e7efe7;
+    --page: #f3f5f1;
+    --border: #dce3dc;
+    --muted: #6b756e;
+    --white: #ffffff;
+    --red: #a7473f;
+    --amber: #866b2b;
+    --shadow: 0 2px 8px rgba(38, 53, 45, 0.05);
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--page);
+    color: var(--green-dark);
+    line-height: 1.5;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    min-height: 40px;
+    padding: 10px 16px;
+    border: 1px solid var(--green);
+    border-radius: 5px;
+    background: var(--green);
+    color: var(--white);
+    cursor: pointer;
+    transition: background 0.18s ease, transform 0.18s ease;
+}
+
+button:hover:not(:disabled) {
+    background: #3f6247;
+    transform: translateY(-1px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 3px solid #a6c4a9;
+    outline-offset: 2px;
+}
+
+.button-secondary {
+    background: #e8eee8;
+    color: var(--green-dark);
+    border-color: #cbd8cc;
+}
+
+.button-secondary:hover:not(:disabled) {
+    background: #dce7dc;
+}
+
+.button-outline {
+    background: transparent;
+    color: var(--green-dark);
+    border-color: #bdcbbf;
+}
+
+.button-outline:hover:not(:disabled) {
+    background: var(--green-light);
+}
+
+.button-small {
+    min-height: 34px;
+    padding: 6px 11px;
+    font-size: 12px;
+}
