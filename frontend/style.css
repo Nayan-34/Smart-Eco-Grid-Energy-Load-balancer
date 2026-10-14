@@ -178,3 +178,96 @@ select:focus-visible {
     font-size: 22px;
     margin-bottom: 4px;
 }
+/* Section headings and grid overview cards */
+
+.section-heading > div > p:last-child {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.time-label,
+.unit-label {
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green-mid);
+    border-radius: 6px;
+    background: #fbfcfa;
+}
+
+.metric-label {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.metric-value {
+    font-size: clamp(20px, 2.4vw, 27px);
+    overflow-wrap: anywhere;
+}
+
+.metric-note {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.status-text {
+    color: var(--green);
+}
+
+.balance-panel {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fafcfa;
+}
+
+.balance-top,
+.card-topline,
+.table-heading,
+.chart-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.balance-top h3,
+.chart-heading h3,
+.form-card h3,
+.table-heading h3,
+.fault-status-card h3,
+.route-card h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.balance-top p,
+.chart-heading p,
+.form-description {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.balance-track {
+    height: 10px;
+    margin: 17px 0 7px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #e4e9e4;
+}
