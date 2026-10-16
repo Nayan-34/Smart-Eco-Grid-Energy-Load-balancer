@@ -1,22 +1,22 @@
 #include "fault_manager.h"
 
-// Constructor for Fault
 Fault::Fault(int id, string location, FaultType type,
-             double voltage, double load)
+             double voltage, double load,
+             double latitude, double longitude)
 {
     this->id = id;
     this->location = location;
     this->type = type;
     this->voltage = voltage;
     this->load = load;
-    active = true;
+    this->latitude = latitude;
+    this->longitude = longitude;
 
-    // Set severity of fault
+    active = true;
+  
     setSeverity();
 }
 
-
-// Set severity of fault
 void Fault::setSeverity()
 {
     if (type == LOW_VOLTAGE)
@@ -47,20 +47,22 @@ void Fault::setSeverity()
     }
 }
 
-// Check the grid for faults
 void FaultManager::checkFault(int id, string location,
-                              double voltage, double load)
+                              double voltage, double load,
+                              double latitude, double longitude)
 {
     cout << "\n--- Fault Detection ---" << endl;
 
     cout << "Location : " << location << endl;
+    cout << "Latitude  : " << latitude << endl;
+    cout << "Longitude : " << longitude << endl;
     cout << "Voltage  : " << voltage << " V" << endl;
     cout << "Load     : " << load << " MW" << endl;
 
     if (voltage < 210)
     {
         Fault fault(id, location, LOW_VOLTAGE,
-                    voltage, load);
+                    voltage, load, latitude, longitude);
 
         faults.push_back(fault);
 
@@ -69,7 +71,7 @@ void FaultManager::checkFault(int id, string location,
     else if (load > 100)
     {
         Fault fault(id, location, OVERLOAD,
-                    voltage, load);
+                    voltage, load, latitude, longitude);
 
         faults.push_back(fault);
 
@@ -81,8 +83,6 @@ void FaultManager::checkFault(int id, string location,
     }
 }
 
-
-// Display all faults
 void FaultManager::showFaults()
 {
     cout << "\n--- Fault List ---" << endl;
@@ -100,6 +100,12 @@ void FaultManager::showFaults()
 
         cout << "Location : "
              << faults[i].location << endl;
+
+        cout << "Latitude : "
+             << faults[i].latitude << endl;
+
+        cout << "Longitude: "
+             << faults[i].longitude << endl;
 
         cout << "Voltage  : "
              << faults[i].voltage << " V" << endl;
@@ -122,8 +128,6 @@ void FaultManager::showFaults()
     }
 }
 
-
-// Resolve a fault
 void FaultManager::resolveFault(int faultId)
 {
     for (int i = 0; i < faults.size(); i++)
@@ -131,14 +135,11 @@ void FaultManager::resolveFault(int faultId)
         if (faults[i].id == faultId)
         {
             faults[i].active = false;
-
             cout << "\nFault "
                  << faultId
                  << " resolved." << endl;
-
             return;
         }
     }
-
     cout << "\nFault not found." << endl;
 }
