@@ -6,7 +6,6 @@
 #include <vector>
 
 using namespace std;
-
 enum FaultType
 {
     NO_FAULT,
@@ -22,11 +21,13 @@ public:
     FaultType type;
     double voltage;
     double load;
+    double latitude;
+    double longitude;
     string severity;
     bool active;
 
     Fault(int id, string location, FaultType type,
-          double voltage, double load);
+          double voltage, double load, double latitude, double longitude);
     
     void setSeverity();
 };
@@ -35,14 +36,10 @@ class FaultManager
 {
 private:
     vector<Fault> faults;
-
 public:
     void checkFault(int id, string location,
-                    double voltage, double load);
-
+                    double voltage, double load, double latitude, double longitude);
     void showFaults();
-
     void resolveFault(int faultId);
 };
-
 #endif

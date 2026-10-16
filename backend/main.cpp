@@ -1,8 +1,8 @@
-
 #include <iostream>
 #include "energy_load.h"
 #include "fault_manager.h"
 #include "route_optimizer.h"
+#include "repair_team_manager.h"
 
 using namespace std;
 
@@ -62,6 +62,21 @@ int main()
     faultManager.checkFault(2, "Substation C", 220, 120);
 
     faultManager.showFaults();
+
+    RepairTeamManager repairManager;
+
+    cout << "\nRepair Team Management Results\n";
+    repairManager.addTeam(RepairTeam(1, "Team Alpha")); 
+    repairManager.addTeam(RepairTeam(2, "Team Beta"));
+    repairManager.addTeam(RepairTeam(3, "Team Gamma"));
+
+    repairManager.showTeams();
+
+    cout << "\nAssigning Repair Team";
+    repairManager.assignTeam();
+
+    cout << "\nUpdated Repair Team Status";
+    repairManager.showTeams();
 
     cout << "\nRoute Optimization Results\n";
 
