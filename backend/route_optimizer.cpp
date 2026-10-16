@@ -1,47 +1,31 @@
-
 #include "route_optimizer.h"
+
 #include <iostream>
-#include <climits>
+#include <sstream>
+#include <iomanip> 
+#include <curl/curl.h>
+
 using namespace std;
 
-void RouteOptimizer::findShortestRoute(int start, int end)
+RouteResult RouteOptimizer::findShortestRoute(Location start, Location end)
 {
-    int distance[10];
-    bool visited[10];
+    RouteResult result = {false, 0, 0, ""};
 
-    for (int i = 0; i < 10; i++)
+    if (start.latitude < -90 || start.latitude > 90 ||
+        end.latitude < -90 || end.latitude > 90 ||
+        start.longitude < -180 || start.longitude > 180 ||
+        end.longitude < -180 || end.longitude > 180)
     {
-        distance[i] = INT_MAX;
-        visited[i] = false;
+        cout << "Invalid coordinates." << endl;
+        return result;
     }
 
-    distance[start] = 0;
-
-    for (int i = 0; i < 10; i++)
-    {
-        int current = -1;
-
-        for (int j = 0; j < 10; j++)
-        {
-            if (!visited[j] &&
-                (current == -1 ||
-                 distance[j] < distance[current]))
-            {
-                current = j;
-            }
-        }
-
-        if (current == -1 || distance[current] == INT_MAX)
-            break;
-
-        visited[current] = true;
-
-        if (current == end)
-            break;
-    }
-
-    if (distance[end] == INT_MAX)
-        cout << "No route found." << endl;
-    else
-        cout << "Shortest distance: " << distance[end] << endl;
+    ostringstream url;
+    url << fixed << setprecision(7) 
+        << "https://router.project-osrm.org/route/v1/driving/"
+        << start.longitude << "," << start.latitude << ";"
+        << end.longitude << "," << end.latitude
+        << "?overview=full&geometries=geojson";
+        
+    return result;
 }
