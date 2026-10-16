@@ -11,8 +11,12 @@ public:
     int id;
     string name;
     bool available;
+    double latitude;
+    double longitude;
 
-    RepairTeam(int id, string name);
+    RepairTeam();
+
+    RepairTeam(int id, string name, double latitude, double longitude);
 };
 
 class RepairTeamManager
@@ -26,7 +30,10 @@ public:
 
     void addTeam(RepairTeam team);
     void showTeams();
-    void assignTeam();
+
+    // Assign nearest available team
+    void assignTeam(double faultLatitude,
+                    double faultLongitude);
 };
 
 #endif
