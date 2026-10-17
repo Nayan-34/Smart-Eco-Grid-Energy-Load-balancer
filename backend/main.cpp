@@ -1,93 +1,231 @@
-#include <iostream>
-#include "energy_load.h"
-#include "fault_manager.h"
+
 #include "route_optimizer.h"
-#include "repair_team_manager.h"
+
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <limits>
+#include <curl/curl.h>
+#include <nlohmann/json.hpp>
+#include <queue>
+#include <algorithm>
 
 using namespace std;
+using json = nlohmann::json;
 
-int main()
+// Receives data returned by the OSRM API.
+size_t writeResponse(
+    void* contents,
+    size_t size,
+    size_t count,
+    void* userData
+)
 {
-    cout << "Smart Eco-Grid Backend" << endl;
-    cout << "----------------------" << endl;
+    size_t total = size * count;
 
-    GridNode grid(500, 1000, 200);
-    LoadManager manager;
+    string* response = static_cast<string*>(userData);
+    response->append(static_cast<char*>(contents), total);
 
-    manager.addConsumer(Consumer("Hospital", HIGH, 200));
-    manager.addConsumer(Consumer("School", MEDIUM, 150));
-    manager.addConsumer(Consumer("Office", LOW, 100));
-    manager.addConsumer(Consumer("Emergency Center", HIGH, 250));
+    return total;
+}
 
-    manager.processGrid(grid);
+// Real-world road routing using OSRM.
+RouteResult RouteOptimizer::findShortestRoute(
+    Location start,
+    Location end
+)
+{
+    RouteResult result = {false, 0, 0, ""};
 
-    cout << "\nPower Allocation Results\n";
-
-    for (int i = 0; i < manager.processedCount; i++)
+    // Validate GPS coordinates.
+    if (start.latitude < -90 || start.latitude > 90 ||
+        end.latitude < -90 || end.latitude > 90 ||
+        start.longitude < -180 || start.longitude > 180 ||
+        end.longitude < -180 || end.longitude > 180)
     {
-        cout << "\nConsumer: "
-             << manager.processedConsumers[i].id << endl;
-
-        cout << "Priority: ";
-
-        if (manager.processedConsumers[i].priority == HIGH)
-            cout << "High";
-        else if (manager.processedConsumers[i].priority == MEDIUM)
-            cout << "Medium";
-        else
-            cout << "Low";
-
-        cout << endl;
-
-        cout << "Power Required: "
-             << manager.processedConsumers[i].powerRequired
-             << " kW" << endl;
-
-        cout << "Power Allocated: "
-             << manager.processedConsumers[i].powerAllocated
-             << " kW" << endl;
+        cout << "Invalid coordinates." << endl;
+        return result;
     }
 
-    cout << "\nTotal Power Allocated: "
-         << manager.totalAllocatedPower_kW << " kW" << endl;
+    // Build the OSRM request URL.
+    ostringstream url;
 
-    cout << "Remaining Power: "
-         << grid.totalAvailablePower_kW << " kW" << endl;
+    url << fixed << setprecision(7)
+        << "https://router.project-osrm.org/route/v1/driving/"
+        << start.longitude << "," << start.latitude << ";"
+        << end.longitude << "," << end.latitude
+        << "?overview=full&geometries=geojson";
 
-    FaultManager faultManager;
+    string urlString = url.str();
 
-    cout << "\nFault Detection Results\n";
+    CURL* curl = curl_easy_init();
 
-    faultManager.checkFault(1, "Substation B", 185, 80);
-    faultManager.checkFault(2, "Substation C", 220, 120);
+    if (curl == nullptr)
+    {
+        cout << "Failed to initialize CURL." << endl;
+        return result;
+    }
 
-    faultManager.showFaults();
+    string response;
 
-    RepairTeamManager repairManager;
+    curl_easy_setopt(curl, CURLOPT_URL, urlString.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeResponse);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
 
-    cout << "\nRepair Team Management Results\n";
-    repairManager.addTeam(RepairTeam(1, "Team Alpha")); 
-    repairManager.addTeam(RepairTeam(2, "Team Beta"));
-    repairManager.addTeam(RepairTeam(3, "Team Gamma"));
+    // Perform the HTTP request.
+    CURLcode status = curl_easy_perform(curl);
 
-    repairManager.showTeams();
+    long httpStatus = 0;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpStatus);
 
-    cout << "\nAssigning Repair Team";
-    repairManager.assignTeam();
+    curl_easy_cleanup(curl);
 
-    cout << "\nUpdated Repair Team Status";
-    repairManager.showTeams();
+    if (status != CURLE_OK || httpStatus != 200)
+    {
+        cout << "Route request failed." << endl;
+        return result;
+    }
 
-    cout << "\nRoute Optimization Results\n";
+    try
+    {
+        json data = json::parse(response);
 
-    RouteOptimizer route(4);
+        if (!data.contains("code") ||
+            data["code"] != "Ok" ||
+            !data.contains("routes") ||
+            !data["routes"].is_array() ||
+            data["routes"].empty())
+        {
+            cout << "No valid route found." << endl;
+            return result;
+        }
 
-    route.addConnection(0, 1, 10);
-    route.addConnection(0, 2, 20);
-    route.addConnection(1, 3, 5);
-    route.addConnection(2, 3, 8);
+        json route = data["routes"][0];
 
-    route.findShortestRoute(0, 3);
+        // Convert metres into kilometres.
+        result.distanceKm =
+            route["distance"].get<double>() / 1000.0;
 
-    return 0;
+        // Convert seconds into minutes.
+        result.durationMinutes =
+            route["duration"].get<double>() / 60.0;
+
+        result.geometry = route["geometry"].dump();
+        result.success = true;
+    }
+    catch (const json::exception& e)
+    {
+        cout << "JSON parsing error: "
+             << e.what() << endl;
+    }
+
+    return result;
+}
+
+// Dijkstra's shortest-path algorithm for the Eco Grid graph.
+DijkstraResult RouteOptimizer::findShortestPath(
+    int nodeCount,
+    const vector<vector<GraphEdge>>& graph,
+    int startNode,
+    int endNode
+)
+{
+    DijkstraResult result = {false, 0, {}};
+
+    // Validate graph dimensions and node numbers.
+    if (nodeCount <= 0 ||
+        graph.size() != static_cast<size_t>(nodeCount) ||
+        startNode < 0 || startNode >= nodeCount ||
+        endNode < 0 || endNode >= nodeCount)
+    {
+        cout << "Invalid graph or node numbers." << endl;
+        return result;
+    }
+
+    // Validate all edges before running Dijkstra.
+    for (const auto& edges : graph)
+    {
+        for (const auto& edge : edges)
+        {
+            if (edge.destination < 0 ||
+                edge.destination >= nodeCount ||
+                edge.weight < 0)
+            {
+                cout << "Invalid graph edge." << endl;
+                return result;
+            }
+        }
+    }
+
+    const double INF = numeric_limits<double>::infinity();
+
+    vector<double> distance(nodeCount, INF);
+    vector<int> parent(nodeCount, -1);
+
+    // Minimum-priority queue: {distance, node}.
+    using NodeRecord = pair<double, int>;
+
+    priority_queue<
+        NodeRecord,
+        vector<NodeRecord>,
+        greater<NodeRecord>
+    > pq;
+
+    distance[startNode] = 0.0;
+    pq.push({0.0, startNode});
+
+    while (!pq.empty())
+    {
+        double currentDist = pq.top().first;
+        int current = pq.top().second;
+
+        pq.pop();
+
+        // Skip outdated queue entries.
+        if (currentDist > distance[current])
+            continue;
+
+        // Destination reached.
+        if (current == endNode)
+            break;
+
+        for (const auto& edge : graph[current])
+        {
+            int next = edge.destination;
+
+            double newDistance = currentDist + edge.weight;
+
+            // Update if a shorter path is found.
+            if (newDistance < distance[next])
+            {
+                distance[next] = newDistance;
+                parent[next] = current;
+
+                pq.push({newDistance, next});
+            }
+        }
+    }
+
+    // Check whether the destination is reachable.
+    if (distance[endNode] == INF)
+    {
+        cout << "No path exists between the given nodes." << endl;
+        return result;
+    }
+
+    // Reconstruct the path from destination to source.
+    for (int node = endNode;
+         node != -1;
+         node = parent[node])
+    {
+        result.path.push_back(node);
+    }
+
+    reverse(result.path.begin(), result.path.end());
+
+    result.success = true;
+    result.totalDistance = distance[endNode];
+
+    return result;
 }

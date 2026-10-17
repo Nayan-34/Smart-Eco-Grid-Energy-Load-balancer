@@ -1,3 +1,4 @@
+
 #ifndef ROUTE_OPTIMIZER_H
 #define ROUTE_OPTIMIZER_H
 
@@ -34,10 +35,10 @@ struct DijkstraResult
 class RouteOptimizer
 {
 public:
-    // Real-world road routing using OSRM.
+    // Finds a real-world road route using OSRM.
     RouteResult findShortestRoute(Location start, Location end);
 
-    // Shortest path through the Eco Grid graph.
+    // Finds the shortest path through the Eco Grid graph using Dijkstra.
     DijkstraResult findShortestPath(
         int nodeCount,
         const std::vector<std::vector<GraphEdge>>& graph,
