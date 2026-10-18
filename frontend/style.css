@@ -950,5 +950,37 @@ footer p {
         transition-duration: 0.01ms !important;
     }
 }
+/* Small hover effect for dashboard cards */
+
+.metric-card,
+.source-card,
+.chart-card,
+.flow-stage,
+.flow-load-card,
+.form-card,
+.table-card,
+.fault-status-card,
+.team-card,
+.route-card,
+.balance-panel,
+.simulation-panel {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover,
+.source-card:hover,
+.chart-card:hover,
+.flow-stage:hover,
+.flow-load-card:hover,
+.form-card:hover,
+.table-card:hover,
+.fault-status-card:hover,
+.team-card:hover,
+.route-card:hover,
+.balance-panel:hover,
+.simulation-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(38, 53, 45, 0.08);
+}
 
 
