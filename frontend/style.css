@@ -512,5 +512,170 @@ select:focus-visible {
 .flow-note {
     margin-top: 14px;
 }
+/* Load management */
+.load-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.load-summary > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fafcfa;
+}
+
+.load-summary span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.load-summary strong {
+    font-size: 21px;
+}
+
+.form-card,
+.table-card,
+.fault-status-card,
+.route-card {
+    margin-top: 18px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fbfcfa;
+}
+
+.form-description {
+    margin-bottom: 16px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: end;
+    margin-bottom: 12px;
+}
+
+.form-grid.one-column {
+    grid-template-columns: 1fr;
+}
+
+.form-group {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    min-height: 41px;
+    padding: 9px 10px;
+    border: 1px solid #cbd4cc;
+    border-radius: 4px;
+    background: var(--white);
+    color: var(--green-dark);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--green-mid);
+    outline: 2px solid #dce9dd;
+}
+
+.form-button {
+    display: flex;
+    align-items: end;
+}
+
+.form-button button {
+    width: 100%;
+}
+
+.table-heading {
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.table-heading h3 {
+    margin: 0;
+}
+
+.table-heading span {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 790px;
+    border-collapse: collapse;
+    background: var(--white);
+}
+
+th,
+td {
+    padding: 11px 10px;
+    border-bottom: 1px solid #e4e8e4;
+    text-align: left;
+    font-size: 12px;
+}
+
+th {
+    background: #edf2ed;
+    font-weight: bold;
+}
+
+tbody tr:hover {
+    background: #f6f9f6;
+}
+
+.allocation-cell {
+    min-width: 110px;
+}
+
+.allocation-track {
+    width: 90px;
+    height: 6px;
+    margin-top: 5px;
+    overflow: hidden;
+    border-radius: 5px;
+    background: #e2e8e2;
+}
+
+.allocation-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--green-mid);
+}
+
+.remove-button {
+    min-height: 30px;
+    padding: 5px 8px;
+    border-color: #e0c7c4;
+    background: #fff7f6;
+    color: #963f37;
+    font-size: 11px;
+}
+
+.remove-button:hover:not(:disabled) {
+    background: #f6e3e0;
+}
 
 
