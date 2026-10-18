@@ -851,6 +851,104 @@ footer p {
     color: #d5dfd7;
     font-size: 12px;
 }
+/* Responsive layout */
+@media (max-width: 900px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
+    .flow-loads {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .fault-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .main-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 23px 5%;
+    }
+
+    .header-status {
+        align-self: flex-start;
+    }
+
+    .dashboard {
+        width: 94%;
+        margin: 15px auto;
+    }
+
+    .section {
+        padding: 16px;
+        margin-bottom: 15px;
+    }
+
+    .section-heading {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .section-heading h2 {
+        font-size: 20px;
+    }
+
+    .overview-grid,
+    .source-grid,
+    .load-summary,
+    .team-grid,
+    .flow-loads,
+    .route-details {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-value {
+        font-size: 24px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card,
+    .form-card,
+    .table-card,
+    .fault-status-card,
+    .route-card {
+        padding: 14px;
+    }
+
+    .chart-card canvas {
+        height: 270px;
+    }
+
+    .balance-top {
+        flex-direction: column;
+    }
+
+    .simulation-buttons button {
+        flex: 1 1 100%;
+    }
+
+    .time-label,
+    .unit-label {
+        white-space: normal;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+    }
+}
 
 
