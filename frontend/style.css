@@ -426,4 +426,91 @@ select:focus-visible {
 .supplied-dot {
     background: #4f7657;
 }
+/* Power flow */
+.flow-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flow-stage {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    padding: 17px;
+    border: 1px solid #ccd8cd;
+    border-left: 4px solid var(--green-mid);
+    border-radius: 6px;
+    background: #f9fbf8;
+    text-align: center;
+}
+
+.flow-stage h3 {
+    font-size: 15px;
+    margin-bottom: 3px;
+}
+
+.flow-stage strong {
+    display: block;
+    color: var(--green);
+    font-size: 22px;
+}
+
+.flow-stage p {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.stage-number {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    color: #829286;
+    font-size: 10px;
+}
+
+.flow-connector {
+    display: grid;
+    height: 34px;
+    place-items: center;
+    color: var(--green-mid);
+    font-size: 25px;
+}
+
+.flow-loads {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.flow-load-card {
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fbfcfa;
+}
+
+.flow-load-card h4 {
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.flow-load-card strong {
+    display: block;
+    color: var(--green);
+    font-size: 17px;
+}
+
+.flow-load-card p {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.flow-note {
+    margin-top: 14px;
+}
+
 
