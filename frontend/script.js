@@ -83,3 +83,74 @@ function getCurrentTime() {
 function updateLastUpdated() {
     setText("lastUpdated", "Last updated: " + getCurrentTime());
 }
+// -------------------- Grid Overview --------------------
+
+function updateGridOverview() {
+    demand = getTotalDemand();
+
+    const balance = generation - demand;
+    const supplied = getTotalSupplied();
+
+    setText("generationValue", generation + " kW");
+    setText("demandValue", demand + " kW");
+    setText(
+        "availablePower",
+        (balance >= 0 ? "+" : "") + balance + " kW"
+    );
+
+    setText(
+        "balanceLabel",
+        balance >= 0 ? "Surplus power" : "Power shortage"
+    );
+
+    const gridStatus = getElement("gridStatus");
+    const gridMessage = getElement("gridMessage");
+    const balanceBadge = getElement("balanceBadge");
+    const balanceInsight = getElement("balanceInsight");
+    const balanceBar = getElement("balanceBar");
+
+    if (balance >= 0) {
+        setText("gridStatus", "Normal");
+        setText("gridMessage", "Generation meets demand");
+
+        if (gridStatus) {
+            gridStatus.style.color = "#4f7657";
+        }
+
+        setText("balanceBadge", "SURPLUS");
+
+        if (balanceBadge) {
+            balanceBadge.className = "status-badge status-good";
+        }
+
+        setText(
+            "balanceInsight",
+            "Generation exceeds demand by " + balance + " kW."
+        );
+
+        if (balanceBar) {
+            balanceBar.style.background = "#789b7d";
+        }
+    } else {
+        setText("gridStatus", "Shortage");
+        setText("gridMessage", "Demand is higher than generation");
+
+        if (gridStatus) {
+            gridStatus.style.color = "#a7473f";
+        }
+
+        setText("balanceBadge", "SHORTAGE");
+
+        if (balanceBadge) {
+            balanceBadge.className = "status-badge status-danger";
+        }
+
+        setText(
+            "balanceInsight",
+            "Demand exceeds generation by " + Math.abs(balance) + " kW."
+        );
+
+        if (balanceBar) {
+            balanceBar.style.background = "#b95c52";
+        }
+    }
