@@ -474,3 +474,140 @@ function drawHorizontalChart(canvasId, items, paired) {
     });
 
     const largestValue = Math.max(...values, 1);
+
+    // Use a readable rounded scale.
+    const scaleStep = Math.pow(
+        10,
+        Math.floor(Math.log10(largestValue))
+    );
+
+    const maximum = Math.ceil(
+        largestValue / scaleStep
+    ) * scaleStep;
+
+    const chartHeight = height - topMargin - bottomMargin;
+
+    context.font = "11px Arial, sans-serif";
+    context.textBaseline = "middle";
+
+    // Vertical grid lines and scale labels.
+    for (let tick = 0; tick <= 4; tick++) {
+        const x = leftMargin + (chartWidth * tick / 4);
+        const value = Math.round(maximum * tick / 4);
+
+        context.beginPath();
+        context.strokeStyle = "#e2e8e2";
+        context.lineWidth = 1;
+        context.moveTo(x, topMargin - 5);
+        context.lineTo(x, height - bottomMargin);
+        context.stroke();
+
+        context.fillStyle = "#6b756e";
+        context.textAlign = "center";
+        context.fillText(String(value), x, height - 16);
+    }
+
+    items.forEach(function (item, index) {
+        const centerY = topMargin +
+            (chartHeight / rowCount) * (index + 0.5);
+
+        context.textAlign = "right";
+        context.fillStyle = "#34473a";
+        context.font = "12px Arial, sans-serif";
+
+        context.fillText(
+            item.label,
+            leftMargin - 10,
+            paired ? centerY - 7 : centerY,
+            leftMargin - 18
+        );
+
+        if (paired) {
+            const barHeight = 10;
+            const requiredWidth =
+                chartWidth * (item.required || 0) / maximum;
+            const suppliedWidth =
+                chartWidth * (item.supplied || 0) / maximum;
+
+            context.fillStyle = "#b9c9ba";
+            context.fillRect(
+                leftMargin,
+                centerY - 16,
+                requiredWidth,
+                barHeight
+            );
+
+            context.fillStyle = "#4f7657";
+            context.fillRect(
+                leftMargin,
+                centerY + 1,
+                suppliedWidth,
+                barHeight
+            );
+
+            context.textAlign = "left";
+            context.fillStyle = "#34473a";
+            context.font = "10px Arial, sans-serif";
+
+            context.fillText(
+                String(item.required || 0),
+                Math.min(leftMargin + requiredWidth + 4, width - 27),
+                centerY - 11
+            );
+
+            context.fillText(
+                String(item.supplied || 0),
+                Math.min(leftMargin + suppliedWidth + 4, width - 27),
+                centerY + 6
+            );
+        } else {
+            const barHeight = Math.min(24, chartHeight / rowCount * 0.5);
+            const barWidth = chartWidth * (item.value || 0) / maximum;
+
+            context.fillStyle = item.color || "#789b7d";
+
+            context.fillRect(
+                leftMargin,
+                centerY - barHeight / 2,
+                barWidth,
+                barHeight
+            );
+
+            context.textAlign = "left";
+            context.fillStyle = "#26352d";
+            context.font = "bold 11px Arial, sans-serif";
+
+            context.fillText(
+                String(item.value || 0) + " kW",
+                Math.min(leftMargin + barWidth + 5, width - 42),
+                centerY
+            );
+        }
+    });
+}
+
+function drawAllCharts() {
+    drawHorizontalChart("generationChart", [
+        { label: "Solar", value: solar, color: "#789b7d" },
+        { label: "Hydro", value: hydro, color: "#638b70" },
+        { label: "Wind", value: wind, color: "#9ab49c" }
+    ], false);
+
+    drawHorizontalChart("generationDemandChart", [
+        { label: "Generation", value: generation, color: "#4f7657" },
+        { label: "Demand", value: demand, color: "#b9a36b" }
+    ], false);
+
+    drawHorizontalChart(
+        "loadAllocationChart",
+        loads.map(function (load) {
+            return {
+                label: load.name,
+                required: load.power,
+                supplied: load.supplied
+            };
+        }),
+        true
+    );
+}
+
