@@ -1071,3 +1071,31 @@ if (pauseButton) {
 if (resetButton) {
     resetButton.addEventListener("click", resetSimulation);
 }
+// -------------------- Window Resize --------------------
+
+let resizeTimer = null;
+
+window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+
+    resizeTimer = setTimeout(function () {
+        drawAllCharts();
+    }, 120);
+});
+
+// -------------------- Initial Dashboard Setup --------------------
+
+function initializeDashboard() {
+    updateGeneration();
+    allocatePower();
+
+    renderTeams(null);
+    updateSimulationButtons();
+
+    addActivity(
+        "Dashboard initialized",
+        "Sample generation and load information has been loaded."
+    );
+}
+
+initializeDashboard();
