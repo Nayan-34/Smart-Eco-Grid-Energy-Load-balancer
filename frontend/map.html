@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101b24">
+    <title>Smart Eco-Grid | Network Map</title>
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="map2.css">
+</head>
+<body>
+    <!-- Main header -->
+    <header class="topbar">
+        <a class="brand" href="1.html">
+            <span class="brand-icon">⚡</span>
+            <span>
+                <strong>Smart Eco-Grid</strong>
+                <small>Energy Distribution Network</small>
+            </span>
+        </a>
+
+        <div class="header-status">
+            <span class="status-dot"></span>
+            SIMULATED GRID
+        </div>
+
+        <a href="1.html" class="back-link">← Dashboard</a>
+    </header>
+
+    <main class="app-layout">
+
+        <!-- Left panel: simulation inputs -->
+        <aside class="panel input-panel">
+            <div class="panel-heading">
+                <h2>Simulation Controls</h2>
+                <p>Change generation and demand, then run the simulation.</p>
+            </div>
+
+            <form id="simulationForm">
+                <section class="input-section">
+                    <h3>1. Generation Sources (kW)</h3>
+
+                    <label for="solarInput">☀ Solar Farm</label>
+                    <input id="solarInput" type="number"
+                           min="0" max="1000000" value="1000" required>
+
+                    <label for="hydroInput">💧 Hydro Plant</label>
+                    <input id="hydroInput" type="number"
+                           min="0" max="1000000" value="800" required>
+
+                    <label for="windInput">🌬 Wind Farm</label>
+                    <input id="windInput" type="number"
+                           min="0" max="1000000" value="700" required>
+                </section>
+
+                <section class="input-section">
+                    <h3>2. Load Demand (kW)</h3>
+
+                    <label for="hospitalInput">🏥 Hospital — P1</label>
+                    <input id="hospitalInput" type="number"
+                           min="0" max="1000000" value="800" required>
+
+                    <label for="schoolInput">🏫 School — P1</label>
+                    <input id="schoolInput" type="number"
+                           min="0" max="1000000" value="300" required>
+
+                    <label for="collegeInput">🎓 College — P2</label>
+                    <input id="collegeInput" type="number"
+                           min="0" max="1000000" value="600" required>
+
+                    <label for="residentialInput">🏘 Residential Area — P3</label>
+                    <input id="residentialInput" type="number"
+                           min="0" max="1000000" value="400" required>
+
+                    <label for="shoppingInput">🛒 Shopping Complex — P3</label>
+                    <input id="shoppingInput" type="number"
+                           min="0" max="1000000" value="500" required>
+                </section>
+
+                <!-- Add extra loads to the simulated network -->
+                <section class="input-section add-load-panel">
+                    <h3>3. Add a Grid Load</h3>
+                    <p>Add another building or area to the simulation.</p>
+
+                    <label for="newLoadName">Load Name</label>
+                    <input id="newLoadName" type="text"
+                           placeholder="e.g. Railway Station" maxlength="50">
+
+                    <label for="newLoadPower">Required Power (kW)</label>
+                    <input id="newLoadPower" type="number"
+                           min="1" max="1000000" placeholder="e.g. 350">
+
+                    <label for="newLoadPriority">Priority</label>
+                    <select id="newLoadPriority">
+                        <option value="1">P1 - High</option>
+                        <option value="2">P2 - Medium</option>
+                        <option value="3">P3 - Low</option>
+                    </select>
+
+                    <button type="button" id="addLoadButton"
+                            class="primary-button">
+                        + Add Load
+                    </button>
+
+                    <p id="addLoadMessage" class="help-text" role="status"></p>
+                </section>
+
+                <div id="customLoadInputs"></div>
+
+                <section class="input-section">
+                    <h3>4. Available Power</h3>
+
+                    <label for="availablePower">Power for Allocation (kW)</label>
+                    <input id="availablePower" type="number"
+                           min="0" max="1000000" value="2500" required>
+
+                    <p class="help-text">
+                        Available power cannot exceed total generation.
+                    </p>
+                </section>
+
+                <button type="submit" class="primary-button">
+                    ▶ Run Simulation
+                </button>
+
+                <button type="button" id="resetButton"
+                        class="secondary-button">
+                    ↻ Reset Values
+                </button>
+            </form>
+
+            <div id="simulationMessage" class="message" role="status">
+                Ready to simulate.
+            </div>
