@@ -610,4 +610,147 @@ function drawAllCharts() {
         true
     );
 }
+// -------------------- Fault Management --------------------
 
+const faultForm = getElement("faultForm");
+
+if (faultForm) {
+    faultForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const type = getElement("faultType").value;
+        const location = getElement("faultLocation").value;
+        const severity = getElement("faultSeverity").value;
+
+        setText("currentFaultType", type);
+        setText("currentFaultLocation", location);
+        setText("currentFaultSeverity", severity);
+        setText("faultBadge", "Reported");
+
+        const faultBadge = getElement("faultBadge");
+
+        if (faultBadge) {
+            faultBadge.className =
+                "status-badge " +
+                (severity === "High"
+                    ? "status-danger"
+                    : severity === "Medium"
+                        ? "status-warning"
+                        : "status-good");
+        }
+
+        addActivity(
+            severity + "-severity fault reported",
+            type + " fault at " + location + "."
+        );
+
+        calculateRepairRoute(location);
+    });
+}
+
+// -------------------- Weighted Graph --------------------
+
+// Distances are illustrative values for the project prototype.
+const gridGraph = {
+    "Team A": { "Substation A": 3 },
+    "Team B": { "Substation C": 2 },
+    "Team C": { "Substation D": 4 },
+
+    "Substation A": {
+        "Team A": 3,
+        "Substation B": 5
+    },
+
+    "Substation B": {
+        "Substation A": 5,
+        "Substation C": 3,
+        "Substation D": 7
+    },
+
+    "Substation C": {
+        "Team B": 2,
+        "Substation B": 3
+    },
+
+    "Substation D": {
+        "Team C": 4,
+        "Substation B": 7
+    }
+};
+
+// -------------------- Dijkstra's Algorithm --------------------
+
+function dijkstra(graph, start, target) {
+    const distance = {};
+    const previous = {};
+    const visited = {};
+
+    const nodes = Object.keys(graph);
+
+    nodes.forEach(function (node) {
+        distance[node] = Infinity;
+        previous[node] = null;
+        visited[node] = false;
+    });
+
+    if (!(start in distance) || !(target in distance)) {
+        return { distance: Infinity, path: [] };
+    }
+
+    distance[start] = 0;
+
+    for (let count = 0; count < nodes.length; count++) {
+        let current = null;
+        let smallestDistance = Infinity;
+
+        nodes.forEach(function (node) {
+            if (
+                !visited[node] &&
+                distance[node] < smallestDistance
+            ) {
+                smallestDistance = distance[node];
+                current = node;
+            }
+        });
+
+        if (current === null) break;
+        if (current === target) break;
+
+        visited[current] = true;
+
+        const neighbours = graph[current];
+
+        for (const neighbour in neighbours) {
+            if (visited[neighbour]) continue;
+
+            const newDistance =
+                distance[current] + neighbours[neighbour];
+
+            if (newDistance < distance[neighbour]) {
+                distance[neighbour] = newDistance;
+                previous[neighbour] = current;
+            }
+        }
+    }
+
+    if (!Number.isFinite(distance[target])) {
+        return { distance: Infinity, path: [] };
+    }
+
+    const path = [];
+    let node = target;
+
+    while (node !== null) {
+        path.unshift(node);
+        node = previous[node];
+    }
+
+    if (path[0] !== start) {
+        return { distance: Infinity, path: [] };
+    }
+
+    return {
+        distance: distance[target],
+        path: path
+    };
+}
