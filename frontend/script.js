@@ -154,3 +154,169 @@ function updateGridOverview() {
             balanceBar.style.background = "#b95c52";
         }
     }
+
+        // The bar represents generation compared with total demand.
+    const scale = Math.max(generation, demand, 1);
+    const percentage = Math.min((generation / scale) * 100, 100);
+
+    if (balanceBar) {
+        balanceBar.style.width = percentage + "%";
+    }
+
+    setText("balanceScale", "Comparison scale: " + scale + " kW");
+
+    setText("totalRequired", demand + " kW");
+    setText("totalSupplied", supplied + " kW");
+
+    const limited = loads.filter(function (load) {
+        return load.supplied < load.power;
+    }).length;
+
+    setText("limitedLoads", limited);
+
+    updateLastUpdated();
+}
+
+// -------------------- Energy Generation --------------------
+
+function updateGeneration() {
+    generation = solar + hydro + wind;
+
+    setText("solarGeneration", solar + " kW");
+    setText("hydroGeneration", hydro + " kW");
+    setText("windGeneration", wind + " kW");
+
+    setText("flowGeneration", generation + " kW");
+    setText("flowTransformer", generation + " kW");
+}
+
+// -------------------- Power Allocation --------------------
+
+function allocatePower() {
+    demand = getTotalDemand();
+
+    // Higher priority numbers are allocated power first.
+    const allocationOrder = loads.slice().sort(function (a, b) {
+        return b.priority - a.priority;
+    });
+
+    let remainingPower = Math.max(generation, 0);
+
+    allocationOrder.forEach(function (load) {
+        const supplied = Math.min(load.power, remainingPower);
+
+        load.supplied = supplied;
+        remainingPower -= supplied;
+
+        load.status = supplied >= load.power
+            ? "Fully Supplied"
+            : supplied > 0
+                ? "Partially Supplied"
+                : "Not Supplied";
+    });
+
+    renderLoadTable();
+    renderNodeFlow();
+    updatePowerDistribution();
+    updateGridOverview();
+    drawAllCharts();
+}
+
+// -------------------- Load Table --------------------
+
+function renderLoadTable() {
+    const table = getElement("loadTable");
+
+    if (!table) return;
+
+    table.replaceChildren();
+
+    loads.forEach(function (load, index) {
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = load.name;
+
+        const priorityCell = document.createElement("td");
+        const priorityBadge = document.createElement("span");
+
+        priorityBadge.className =
+            "status-badge " + getPriorityClass(load.priority);
+
+        priorityBadge.textContent = getPriorityName(load.priority);
+        priorityCell.appendChild(priorityBadge);
+
+        const requiredCell = document.createElement("td");
+        requiredCell.textContent = load.power + " kW";
+
+        const suppliedCell = document.createElement("td");
+        suppliedCell.textContent = load.supplied + " kW";
+
+        const allocationCell = document.createElement("td");
+        allocationCell.className = "allocation-cell";
+
+        const percentage = load.power > 0
+            ? Math.round((load.supplied / load.power) * 100)
+            : 0;
+
+        allocationCell.appendChild(
+            document.createTextNode(percentage + "%")
+        );
+
+        const track = document.createElement("div");
+        track.className = "allocation-track";
+
+        const fill = document.createElement("div");
+        fill.className = "allocation-fill";
+        fill.style.width = percentage + "%";
+
+        track.appendChild(fill);
+        allocationCell.appendChild(track);
+
+        const statusCell = document.createElement("td");
+        const statusBadge = document.createElement("span");
+
+        statusBadge.className =
+            "status-badge " +
+            (percentage === 100
+                ? "status-good"
+                : percentage > 0
+                    ? "status-warning"
+                    : "status-danger");
+
+        statusBadge.textContent = load.status;
+        statusCell.appendChild(statusBadge);
+
+        const actionCell = document.createElement("td");
+        const removeButton = document.createElement("button");
+
+        removeButton.type = "button";
+        removeButton.className = "remove-button";
+        removeButton.textContent = "Remove";
+        removeButton.setAttribute("aria-label", "Remove " + load.name);
+
+        removeButton.addEventListener("click", function () {
+            removeLoad(index);
+        });
+
+        actionCell.appendChild(removeButton);
+
+        row.append(
+            nameCell,
+            priorityCell,
+            requiredCell,
+            suppliedCell,
+            allocationCell,
+            statusCell,
+            actionCell
+        );
+
+        table.appendChild(row);
+    });
+
+    setText(
+        "loadCount",
+        loads.length + (loads.length === 1 ? " load" : " loads")
+    );
+}
+
