@@ -754,3 +754,123 @@ function dijkstra(graph, start, target) {
         path: path
     };
 }
+
+
+// -------------------- Repair Team Selection --------------------
+
+function selectRepairTeam(location) {
+    let bestChoice = null;
+
+    teams.forEach(function (team) {
+        if (!team.available) return;
+
+        const result = dijkstra(
+            gridGraph,
+            team.name,
+            location
+        );
+
+        if (result.path.length === 0) return;
+
+        if (
+            bestChoice === null ||
+            result.distance < bestChoice.result.distance
+        ) {
+            bestChoice = {
+                team: team,
+                result: result
+            };
+        }
+    });
+
+    return bestChoice;
+}
+
+function calculateRepairRoute(location) {
+    const selection = selectRepairTeam(location);
+
+    if (selection === null) {
+        setText("selectedTeam", "No available team");
+        setText("routeDistance", "--");
+        setText("repairRoute", "No route found.");
+        setText("routeStatus", "Unavailable");
+
+        const status = getElement("routeStatus");
+
+        if (status) {
+            status.className = "status-badge status-danger";
+        }
+
+        renderTeams(null);
+
+        addActivity(
+            "Route calculation failed",
+            "No available repair team could reach " + location + "."
+        );
+
+        return;
+    }
+
+    setText("selectedTeam", selection.team.name);
+    setText("routeDistance", selection.result.distance + " km");
+    setText("repairRoute", selection.result.path.join(" → "));
+    setText("routeStatus", "Route Found");
+
+    const status = getElement("routeStatus");
+
+    if (status) {
+        status.className = "status-badge status-good";
+    }
+
+    renderTeams(selection.team.name);
+
+    addActivity(
+        "Repair route calculated",
+        selection.team.name + " selected for " + location +
+        "; estimated route distance " + selection.result.distance + " km."
+    );
+}
+
+function renderTeams(selectedTeamName) {
+    const teamGrid = getElement("teamGrid");
+
+    if (!teamGrid) return;
+
+    teamGrid.replaceChildren();
+
+    teams.forEach(function (team) {
+        const card = document.createElement("article");
+        card.className = "team-card";
+
+        if (team.name === selectedTeamName) {
+            card.classList.add("selected-team");
+        }
+
+        const heading = document.createElement("h3");
+        heading.textContent = team.name;
+
+        const description = document.createElement("p");
+
+        description.textContent = team.available
+            ? team.name === selectedTeamName
+                ? "Selected for this repair"
+                : "Available for assignment"
+            : "Currently occupied";
+
+        const badge = document.createElement("span");
+
+        if (!team.available) {
+            badge.className = "status-badge status-warning";
+            badge.textContent = "Busy";
+        } else if (team.name === selectedTeamName) {
+            badge.className = "status-badge status-good";
+            badge.textContent = "Selected";
+        } else {
+            badge.className = "status-badge status-good";
+            badge.textContent = "Available";
+        }
+
+        card.append(heading, description, badge);
+        teamGrid.appendChild(card);
+    });
+}
