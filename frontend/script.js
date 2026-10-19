@@ -874,3 +874,151 @@ function renderTeams(selectedTeamName) {
         teamGrid.appendChild(card);
     });
 }
+// -------------------- Recent Activity --------------------
+
+function addActivity(title, description) {
+    const activityList = getElement("activityList");
+
+    if (!activityList) return;
+
+    const emptyMessage = activityList.querySelector(".empty-activity");
+
+    if (emptyMessage) {
+        emptyMessage.remove();
+    }
+
+    const item = document.createElement("div");
+    item.className = "activity-item";
+
+    const dot = document.createElement("span");
+    dot.className = "activity-dot";
+
+    const content = document.createElement("div");
+
+    const heading = document.createElement("strong");
+    heading.textContent = title;
+
+    const details = document.createElement("p");
+    details.textContent = getCurrentTime() + " — " + description;
+
+    content.append(heading, details);
+    item.append(dot, content);
+
+    activityList.prepend(item);
+
+    // Keep the latest eight activity entries.
+    while (activityList.children.length > 8) {
+        activityList.lastElementChild.remove();
+    }
+}
+
+function clearActivity() {
+    const activityList = getElement("activityList");
+
+    if (!activityList) return;
+
+    activityList.replaceChildren();
+
+    const message = document.createElement("p");
+    message.className = "empty-activity";
+    message.textContent = "No activity recorded yet.";
+
+    activityList.appendChild(message);
+}
+
+const clearActivityButton = getElement("clearActivity");
+
+if (clearActivityButton) {
+    clearActivityButton.addEventListener("click", clearActivity);
+}
+
+// -------------------- Simulation Controls --------------------
+
+function updateSimulationButtons() {
+    const start = getElement("startSimulation");
+    const pause = getElement("pauseSimulation");
+
+    if (start) start.disabled = simulationRunning;
+    if (pause) pause.disabled = !simulationRunning;
+
+    setText(
+        "simulationMessage",
+        simulationRunning
+            ? "Simulation is running. Values update every three seconds."
+            : "Simulation is currently paused."
+    );
+}
+
+function startSimulation() {
+    if (simulationRunning) return;
+
+    simulationRunning = true;
+    updateSimulationButtons();
+
+    simulationTimer = setInterval(function () {
+        // Vary the renewable sources by small simulated amounts.
+        solar = Math.max(
+            0,
+            solar + Math.floor(Math.random() * 61) - 30
+        );
+
+        hydro = Math.max(
+            0,
+            hydro + Math.floor(Math.random() * 31) - 15
+        );
+
+        wind = Math.max(
+            0,
+            wind + Math.floor(Math.random() * 81) - 40
+        );
+
+        updateGeneration();
+        allocatePower();
+
+    }, 3000);
+
+    addActivity(
+        "Simulation started",
+        "Generation readings are now changing."
+    );
+}
+
+function pauseSimulation() {
+    if (simulationTimer !== null) {
+        clearInterval(simulationTimer);
+        simulationTimer = null;
+    }
+
+    const wasRunning = simulationRunning;
+    simulationRunning = false;
+    updateSimulationButtons();
+
+    if (wasRunning) {
+        addActivity(
+            "Simulation paused",
+            "The simulated readings have stopped changing."
+        );
+    }
+}
+
+function resetSimulation() {
+    pauseSimulation();
+
+    loads = initialLoads.map(function (load) {
+        return {
+            ...load,
+            supplied: 0,
+            status: "Active"
+        };
+    });
+
+    solar = 1000;
+    hydro = 800;
+    wind = 700;
+
+    teams = initialTeams.map(function (team) {
+        return { ...team };
+    });
+
+    updateGeneration();
+    allocatePower();
