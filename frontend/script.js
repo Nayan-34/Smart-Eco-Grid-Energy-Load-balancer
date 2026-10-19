@@ -319,4 +319,158 @@ function renderLoadTable() {
         loads.length + (loads.length === 1 ? " load" : " loads")
     );
 }
+// -------------------- Add and Remove Loads --------------------
 
+const loadForm = getElement("loadForm");
+
+if (loadForm) {
+    loadForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const name = getElement("loadName").value.trim();
+        const power = Number(getElement("loadPower").value);
+        const priority = Number(getElement("loadPriority").value);
+
+        if (!name || !Number.isFinite(power) || power <= 0) {
+            alert("Enter a valid load name and power value.");
+            return;
+        }
+
+        if (![1, 2, 3].includes(priority)) {
+            alert("Please select a valid priority.");
+            return;
+        }
+
+        const duplicate = loads.some(function (load) {
+            return load.name.toLowerCase() === name.toLowerCase();
+        });
+
+        if (duplicate) {
+            alert("A load with this name already exists.");
+            return;
+        }
+
+        loads.push({
+            name: name,
+            power: power,
+            priority: priority,
+            supplied: 0,
+            status: "Not Supplied"
+        });
+
+        allocatePower();
+
+        addActivity(
+            "New load added: " + name,
+            power + " kW required, priority " + priority + "."
+        );
+
+        loadForm.reset();
+        getElement("loadName").focus();
+    });
+}
+
+function removeLoad(index) {
+    if (index < 0 || index >= loads.length) return;
+
+    const removedLoad = loads[index];
+
+    loads.splice(index, 1);
+    allocatePower();
+
+    addActivity(
+        "Load removed: " + removedLoad.name,
+        "The load was removed from the simulated grid."
+    );
+}
+
+// -------------------- Node and Power-Flow Display --------------------
+
+function renderNodeFlow() {
+    const flowLoads = getElement("flowLoads");
+
+    if (!flowLoads) return;
+
+    flowLoads.replaceChildren();
+
+    loads.forEach(function (load) {
+        const card = document.createElement("article");
+        card.className = "flow-load-card";
+
+        const heading = document.createElement("h4");
+        heading.textContent = load.name;
+
+        const supplied = document.createElement("strong");
+        supplied.textContent = load.supplied + " kW";
+
+        const details = document.createElement("p");
+        details.textContent =
+            "Required: " + load.power + " kW";
+
+        const status = document.createElement("p");
+        status.textContent = load.status;
+
+        card.append(heading, supplied, details, status);
+        flowLoads.appendChild(card);
+    });
+
+    setText("flowDistributed", getTotalSupplied() + " kW");
+}
+
+function updatePowerDistribution() {
+    setText("totalRequired", getTotalDemand() + " kW");
+    setText("totalSupplied", getTotalSupplied() + " kW");
+}
+
+// -------------------- Horizontal Bar Charts --------------------
+
+function drawHorizontalChart(canvasId, items, paired) {
+    const canvas = getElement(canvasId);
+
+    if (!canvas) return;
+
+    const context = canvas.getContext("2d");
+
+    if (!context) return;
+
+    const width = Math.max(canvas.clientWidth, 280);
+
+    const rowCount = items.length;
+    const rowHeight = paired ? 54 : 47;
+    const height = Math.max(220, rowCount * rowHeight + 65);
+
+    const pixelRatio = window.devicePixelRatio || 1;
+
+    canvas.style.height = height + "px";
+    canvas.width = Math.round(width * pixelRatio);
+    canvas.height = Math.round(height * pixelRatio);
+
+    context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    context.clearRect(0, 0, width, height);
+
+    const leftMargin = Math.min(
+        150,
+        Math.max(95, width * 0.30)
+    );
+
+    const rightMargin = 55;
+    const topMargin = 24;
+    const bottomMargin = 34;
+
+    const chartWidth = Math.max(
+        50,
+        width - leftMargin - rightMargin
+    );
+
+    const values = [];
+
+    items.forEach(function (item) {
+        values.push(item.value || 0);
+
+        if (paired) {
+            values.push(item.required || 0);
+            values.push(item.supplied || 0);
+        }
+    });
+
+    const largestValue = Math.max(...values, 1);
