@@ -1022,3 +1022,52 @@ function resetSimulation() {
 
     updateGeneration();
     allocatePower();
+
+    
+    // Restore the initial sample fault.
+    setText("currentFaultType", "Transmission Line");
+    setText("currentFaultLocation", "Substation B");
+    setText("currentFaultSeverity", "High");
+
+    const faultBadge = getElement("faultBadge");
+
+    if (faultBadge) {
+        faultBadge.className = "status-badge status-danger";
+        faultBadge.textContent = "Reported";
+    }
+
+    setText("selectedTeam", "Not selected");
+    setText("routeDistance", "--");
+    setText("repairRoute", "Report a fault to calculate the route.");
+    setText("routeStatus", "Waiting");
+
+    const routeStatus = getElement("routeStatus");
+
+    if (routeStatus) {
+        routeStatus.className = "status-badge status-neutral";
+    }
+
+    renderTeams(null);
+    updateSimulationButtons();
+
+    addActivity(
+        "Dashboard reset",
+        "Initial sample generation and load values have been restored."
+    );
+}
+
+const startButton = getElement("startSimulation");
+const pauseButton = getElement("pauseSimulation");
+const resetButton = getElement("resetSimulation");
+
+if (startButton) {
+    startButton.addEventListener("click", startSimulation);
+}
+
+if (pauseButton) {
+    pauseButton.addEventListener("click", pauseSimulation);
+}
+
+if (resetButton) {
+    resetButton.addEventListener("click", resetSimulation);
+}
