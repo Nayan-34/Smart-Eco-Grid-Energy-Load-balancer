@@ -924,4 +924,238 @@ label {
     margin: 8px 0;
     font-size: 12px;
 }
+/* -------------------- Footer -------------------- */
 
+.page-footer {
+    padding: 18px 14px 22px;
+    border-top: 1px solid var(--border);
+    background: #14232c;
+    color: var(--muted);
+    text-align: center;
+    font-size: 11px;
+}
+
+.page-footer strong,
+.page-footer span {
+    display: block;
+}
+
+.page-footer strong {
+    color: #dce9e1;
+    font-size: 12px;
+}
+
+.page-footer span {
+    margin-top: 3px;
+}
+
+.page-footer p {
+    margin: 7px 0 0;
+    font-size: 11px;
+}
+
+/* -------------------- Responsive Layout -------------------- */
+
+@media (max-width: 1450px) {
+    .app-layout {
+        grid-template-columns:
+            minmax(220px, 250px)
+            minmax(380px, 1fr)
+            minmax(235px, 260px);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .panel {
+        padding: 12px;
+    }
+
+    .map-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .map-actions {
+        width: 100%;
+    }
+
+    .map-actions input {
+        flex: 1;
+        width: auto;
+    }
+}
+
+@media (max-width: 1100px) {
+    .app-layout {
+        grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    }
+
+    .map-column {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+    }
+
+    .right-column {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    #gridMap {
+        height: 72vh;
+        min-height: 480px;
+    }
+
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .topbar {
+        position: static;
+        flex-wrap: wrap;
+        padding: 11px 13px;
+    }
+
+    .header-status {
+        order: 3;
+        width: 100%;
+    }
+
+    .app-layout {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .input-panel,
+    .map-column,
+    .right-column {
+        width: 100%;
+    }
+
+    .map-column {
+        order: -1;
+    }
+
+    #gridMap {
+        height: 65vh;
+        min-height: 400px;
+    }
+
+    .map-heading {
+        gap: 10px;
+    }
+
+    .map-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto auto auto;
+    }
+
+    .map-actions input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .map-actions button {
+        min-width: 32px;
+    }
+
+    #fullMapButton {
+        min-width: 0;
+        padding: 6px 7px;
+    }
+
+    .map-footer {
+        gap: 8px;
+    }
+
+    .map-footer > span:last-child {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .energy-endpoints {
+        gap: 8px;
+    }
+
+    .bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .route-selectors {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+}
+
+@media (max-width: 420px) {
+    .brand strong {
+        font-size: 14px;
+    }
+
+    .back-link {
+        padding: 7px 9px;
+        font-size: 11px;
+    }
+
+    .map-panel {
+        padding: 9px;
+    }
+
+    .map-heading h2 {
+        font-size: 17px;
+    }
+
+    #gridMap {
+        height: 58vh;
+        min-height: 350px;
+    }
+
+    .map-actions {
+        grid-template-columns: minmax(0, 1fr) 58px 32px 32px;
+        gap: 4px;
+    }
+
+    .map-actions input {
+        grid-column: 1;
+    }
+
+    #searchButton {
+        grid-column: 2;
+    }
+
+    #zoomInButton {
+        grid-column: 3;
+    }
+
+    #zoomOutButton {
+        grid-column: 4;
+    }
+
+    #fullMapButton {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .route-buttons {
+        flex-direction: column;
+    }
+
+    .route-buttons button {
+        width: 100%;
+    }
+
+    .allocation-top {
+        flex-direction: column;
+    }
+
+    .allocation-value {
+        text-align: left;
+    }
+
+    .energy-endpoints {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
