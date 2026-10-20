@@ -135,3 +135,80 @@
             <div id="simulationMessage" class="message" role="status">
                 Ready to simulate.
             </div>
+<!-- Overall power summary -->
+            <section class="summary-box">
+                <h3>Grid Summary</h3>
+
+                <div class="summary-row">
+                    <span>Total Generation</span>
+                    <strong id="totalGeneration">2,500 kW</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Total Demand</span>
+                    <strong id="totalDemand">2,600 kW</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Power Allocated</span>
+                    <strong id="totalAllocated">2,500 kW</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Unserved Demand</span>
+                    <strong id="unservedDemand">100 kW</strong>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Centre panel: interactive grid map -->
+        <section class="map-column">
+            <div class="panel map-panel">
+                <div class="map-heading">
+                    <div>
+                        <h2>Grid Network Map</h2>
+                        <p>Generation → Substations → Distribution Loads</p>
+                    </div>
+
+                    <div class="map-actions">
+                        <input id="locationSearch" type="search"
+                               placeholder="Search a grid node..."
+                               aria-label="Search grid locations">
+
+                        <button type="button" id="searchButton">Search</button>
+                        <button type="button" id="zoomInButton"
+                                aria-label="Zoom in">+</button>
+                        <button type="button" id="zoomOutButton"
+                                aria-label="Zoom out">−</button>
+
+                        <!-- Open the existing map in fullscreen -->
+                        <button type="button" id="fullMapButton">
+                            ⛶ Full Map
+                        </button>
+                    </div>
+                </div>
+
+                <div id="gridMap"
+                     role="application"
+                     aria-label="Interactive simulated electricity grid map">
+                </div>
+
+                <!-- Start and end indicators for the selected energy route -->
+                <div class="energy-endpoints" aria-live="polite">
+                    <span>
+                        <strong>Start Point:</strong>
+                        <span id="energyStartPoint">Select a source</span>
+                    </span>
+                    <span>
+                        <strong>End Point:</strong>
+                        <span id="energyEndPoint">Select a destination</span>
+                    </span>
+                </div>
+
+                <div class="map-footer">
+                    <span><i class="legend-line normal-line"></i> Normal</span>
+                    <span><i class="legend-line limited-line"></i> Limited</span>
+                    <span><i class="legend-line fault-line"></i> Fault</span>
+                    <span>Click a node to view its details</span>
+                </div>
+            </div>
