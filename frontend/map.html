@@ -212,3 +212,136 @@
                     <span>Click a node to view its details</span>
                 </div>
             </div>
+
+            
+            <!-- Route finder: separate from the repair route feature -->
+            <section class="panel feature-card route-finder">
+                <div class="panel-heading">
+                    <h2>Find a Route Between Nodes</h2>
+                    <p>
+                        Select a start node and destination to display a
+                        route across the simulated grid.
+                    </p>
+                </div>
+
+                <div class="route-selectors">
+                    <div>
+                        <label for="startNodeSelect">Start Node</label>
+                        <select id="startNodeSelect">
+                            <option value="solar">Solar Farm</option>
+                            <option value="hydro">Hydro Plant</option>
+                            <option value="wind">Wind Farm</option>
+                            <option value="substationA">Substation A</option>
+                            <option value="substationB">Substation B</option>
+                            <option value="substationC">Substation C</option>
+                            <option value="hospital">Hospital</option>
+                            <option value="school">School</option>
+                            <option value="college">College</option>
+                            <option value="residential">Residential Area</option>
+                            <option value="shopping">Shopping Complex</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="endNodeSelect">Destination Node</label>
+                        <select id="endNodeSelect">
+                            <option value="hospital">Hospital</option>
+                            <option value="school">School</option>
+                            <option value="college">College</option>
+                            <option value="residential">Residential Area</option>
+                            <option value="shopping">Shopping Complex</option>
+                            <option value="solar">Solar Farm</option>
+                            <option value="hydro">Hydro Plant</option>
+                            <option value="wind">Wind Farm</option>
+                            <option value="substationA">Substation A</option>
+                            <option value="substationB">Substation B</option>
+                            <option value="substationC">Substation C</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="route-buttons">
+                    <button type="button" id="findPathButton"
+                            class="primary-button">
+                        Find Route
+                    </button>
+
+                    <button type="button" id="clearPathButton"
+                            class="secondary-button">
+                        Clear Route
+                    </button>
+                </div>
+
+                <div id="pathResult" class="path-result" aria-live="polite">
+                    <strong>Route details</strong>
+                    <p id="pathMessage">
+                        Select a start node and destination.
+                    </p>
+                    <p>Distance: <strong id="pathDistance">—</strong></p>
+                    <p>Path: <strong id="pathSequence">—</strong></p>
+                </div>
+
+                <p class="help-text">
+                    The current map uses a simulated network. The final
+                    shortest-path calculation will be handled by the C++
+                    backend using Dijkstra's algorithm.
+                </p>
+            </section>
+
+            <!-- Fault simulation and repair route stay separate -->
+            <div class="bottom-grid">
+                <section class="panel feature-card">
+                    <h3>⚠ Fault Simulation</h3>
+                    <p>
+                        Add a simulated fault to a grid connection and
+                        observe the affected line.
+                    </p>
+
+                    <label for="faultLineSelect">Select Line</label>
+                    <select id="faultLineSelect">
+                        <option value="line-solar">Solar feeder</option>
+                        <option value="line-hydro">Hydro feeder</option>
+                        <option value="line-wind">Wind feeder</option>
+                        <option value="line-sub-a-b">Substation A–B</option>
+                        <option value="line-sub-b-c">Substation B–C</option>
+                        <option value="line-hospital">Hospital feeder</option>
+                        <option value="line-school">School feeder</option>
+                        <option value="line-college">College feeder</option>
+                        <option value="line-residential">Residential feeder</option>
+                        <option value="line-shopping">Shopping feeder</option>
+                    </select>
+
+                    <button type="button" id="addFaultButton"
+                            class="secondary-button">
+                        Add Fault
+                    </button>
+
+                    <button type="button" id="clearFaultButton"
+                            class="secondary-button">
+                        Clear Faults
+                    </button>
+                </section>
+
+                <section class="panel feature-card">
+                    <h3>🛠 Repair Route</h3>
+                    <p>
+                        Show a demonstration route from the repair depot
+                        to the selected faulty line.
+                    </p>
+
+                    <button type="button" id="repairRouteButton"
+                            class="primary-button">
+                        Show Repair Route
+                    </button>
+
+                    <button type="button" id="clearRouteButton"
+                            class="secondary-button">
+                        Clear Repair Route
+                    </button>
+
+                    <p id="routeMessage" class="help-text" role="status">
+                        Add a fault to request a repair route.
+                    </p>
+                </section>
+            </div>
+        </section>
