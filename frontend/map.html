@@ -396,3 +396,84 @@
                     <span>Capacity / Generation</span>
                     <strong id="detailCapacity">—</strong>
                 </div>
+<!-- Remaining Power row removed as requested -->
+
+                <div class="detail-row detail-row-stacked">
+                    <span>Connected Node</span>
+                    <strong id="detailConnected">—</strong>
+                </div>
+
+                <div class="detail-row detail-row-stacked">
+                    <span>Supply Source / Substation</span>
+                    <strong id="detailSource">—</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Estimated Network Distance</span>
+                    <strong id="detailDistance">—</strong>
+                </div>
+            </section>
+
+            <section class="panel allocation-panel">
+                <div class="panel-heading">
+                    <h2>Power Allocation</h2>
+                    <p>Loads are processed by priority: P1, P2, then P3.</p>
+                </div>
+
+                <div id="allocationList" class="allocation-list"></div>
+            </section>
+
+            <section class="panel generation-panel">
+                <div class="panel-heading">
+                    <h2>Generation Sources</h2>
+                    <p>Current simulated output</p>
+                </div>
+
+                <div class="source-row">
+                    <span>☀ Solar</span>
+                    <strong id="solarValue">1,000 kW</strong>
+                </div>
+
+                <div class="source-row">
+                    <span>💧 Hydro</span>
+                    <strong id="hydroValue">800 kW</strong>
+                </div>
+
+                <div class="source-row">
+                    <span>🌬 Wind</span>
+                    <strong id="windValue">700 kW</strong>
+                </div>
+
+                <div class="source-row total-row">
+                    <span>Total Generation</span>
+                    <strong id="sourceTotal">2,500 kW</strong>
+                </div>
+            </section>
+
+            <section class="panel legend-panel">
+                <h2>Map Legend</h2>
+                <p>☀ Generation source</p>
+                <p>⚡ Substation / transformer</p>
+                <p>🏥 High-priority load</p>
+                <p>🏫 Medium-priority load</p>
+                <p>🏘 Low-priority load</p>
+                <p><i class="legend-line normal-line"></i> Normal power line</p>
+                <p><i class="legend-line limited-line"></i> Limited power line</p>
+                <p><i class="legend-line fault-line"></i> Faulty power line</p>
+            </section>
+        </aside>
+    </main>
+
+    <footer class="page-footer">
+        <strong>Smart Eco-Grid Management System</strong>
+        <span>Energy Distribution Network</span>
+        <p>
+            The project currently uses sample and simulated data for testing.
+            It does not use real-time data from physical grid sensors.
+        </p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map2.js"></script>
+</body>
+</html>
