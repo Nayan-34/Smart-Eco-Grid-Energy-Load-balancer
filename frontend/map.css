@@ -389,3 +389,233 @@ label {
     font-size: 12px;
     overflow-wrap: anywhere;
 }
+
+
+/* -------------------- Map Panel -------------------- */
+
+.map-column {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.map-panel {
+    padding: 14px;
+}
+
+.map-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.map-heading h2 {
+    font-size: 19px;
+}
+
+.map-heading p {
+    margin-bottom: 0;
+    font-size: 12px;
+}
+
+.map-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.map-actions input {
+    width: 175px;
+    padding: 8px;
+    font-size: 12px;
+}
+
+.map-actions button {
+    min-width: 34px;
+    min-height: 34px;
+    padding: 6px 9px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #223640;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.map-actions button:hover {
+    border-color: var(--green);
+}
+
+/* Full Map button */
+
+#fullMapButton {
+    min-width: 94px;
+    padding: 7px 10px;
+    border-color: var(--green-dark);
+    background: #24483b;
+    color: #ffffff;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#fullMapButton:hover {
+    border-color: var(--green);
+    background: #2b6049;
+}
+
+#gridMap {
+    width: 100%;
+    height: min(78vh, 850px);
+    min-height: 540px;
+    overflow: hidden;
+    border: 1px solid #354b50;
+    border-radius: 9px;
+    background: #dce7df;
+}
+
+/* Start and end points for the selected route */
+
+.energy-endpoints {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 22px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel-inner);
+    font-size: 12px;
+}
+
+.energy-endpoints > span {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.energy-endpoints strong {
+    color: var(--muted);
+}
+
+#energyStartPoint,
+#energyEndPoint {
+    color: var(--text);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+#energyStartPoint::before {
+    content: "●";
+    margin-right: 5px;
+    color: var(--green);
+}
+
+#energyEndPoint::before {
+    content: "●";
+    margin-right: 5px;
+    color: var(--blue);
+}
+
+.map-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.map-footer > span:last-child {
+    margin-left: auto;
+}
+
+.legend-line {
+    display: inline-block;
+    width: 22px;
+    height: 3px;
+    margin-right: 5px;
+    vertical-align: middle;
+    border-radius: 2px;
+}
+
+.normal-line {
+    background: var(--green);
+}
+
+.limited-line {
+    background: var(--yellow);
+}
+
+.fault-line {
+    background: var(--red);
+}
+
+/* -------------------- Map Markers -------------------- */
+
+.grid-marker {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 2px solid #e6f6eb;
+    border-radius: 50%;
+    background: #233c37;
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grid-marker:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 5px rgba(50, 209, 139, 0.16);
+}
+
+.grid-marker.source {
+    border-color: #b4f1d1;
+    background: #176c4a;
+}
+
+.grid-marker.substation {
+    border-color: #b7d9e8;
+    background: #28556a;
+}
+
+.grid-marker.load {
+    border-color: #d9e8d8;
+    background: #314d3d;
+}
+
+.grid-marker.active {
+    border-color: var(--green);
+}
+
+.grid-marker.limited {
+    border-color: var(--yellow);
+    background: #5d4d20;
+}
+
+.grid-marker.off,
+.grid-marker.fault {
+    border-color: var(--red);
+    background: #692e34;
+}
+
+.grid-tooltip {
+    padding: 6px 8px !important;
+    border: 1px solid #526c65 !important;
+    border-radius: 6px !important;
+    background: #15252d !important;
+    color: #f0f6f1 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22) !important;
+    font-size: 11px !important;
+}
+
+.leaflet-tooltip-top:before {
+    border-top-color: #15252d !important;
+}
