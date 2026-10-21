@@ -867,4 +867,101 @@ function addNewLoad() {
         option.textContent = name;
         select.appendChild(option);
     });
+// Create an editable demand input.
+    const wrapper = document.createElement("div");
+    wrapper.className = "custom-load-input";
+    wrapper.dataset.loadId = id;
 
+    const label = document.createElement("label");
+    label.htmlFor = `custom-demand-${id}`;
+    label.textContent = `${name} Demand (kW)`;
+
+    const input = document.createElement("input");
+    input.type = "number";
+    input.id = `custom-demand-${id}`;
+    input.min = "0";
+    input.max = "1000000";
+    input.value = String(power);
+    input.required = true;
+
+    wrapper.append(label, input);
+    getElement("customLoadInputs").appendChild(wrapper);
+
+    nameInput.value = "";
+    powerInput.value = "";
+
+    try {
+        runSimulation();
+        map.setView(coords, 14);
+
+        if (state.markers[id]) {
+            state.markers[id].openTooltip();
+        }
+
+        message.textContent = `${name} added successfully.`;
+    } catch (error) {
+        message.textContent = `Load added, but simulation failed: ${error.message}`;
+    }
+}
+
+// -------------------- Fault Simulation --------------------
+
+function addFault() {
+    const selectedLine = getElement("faultLineSelect").value;
+
+    if (!connections.some(connection => connection.id === selectedLine)) {
+        setMessage("Select a valid line first.", true);
+        return;
+    }
+
+    state.faults.add(selectedLine);
+
+    drawPowerLines();
+    drawLoadMarkers();
+
+    if (state.selectedNode) {
+        selectNode(state.selectedNode);
+    }
+
+    setMessage(
+        `Simulated fault added to ${selectedLine.replace("line-", "")}.`,
+        false
+    );
+}
+
+function clearFault() {
+    state.faults.clear();
+    repairRouteLayer.clearLayers();
+    state.repairRoute = null;
+
+    getElement("routeMessage").textContent = "No repair route selected.";
+
+    drawPowerLines();
+    drawLoadMarkers();
+
+    if (state.selectedNode) {
+        selectNode(state.selectedNode);
+    }
+
+    setMessage("All simulated faults cleared.", false);
+}
+
+// -------------------- Repair Route Demonstration --------------------
+
+function showRepairRoute() {
+    repairRouteLayer.clearLayers();
+
+    const selectedLine = getElement("faultLineSelect").value;
+    const connection = connections.find(item => item.id === selectedLine);
+
+    if (!connection) {
+        setMessage("Select a valid line first.", true);
+        return;
+    }
+
+    if (!state.faults.has(selectedLine)) {
+        getElement("routeMessage").textContent =
+            "Add a fault to the selected line before requesting a repair route.";
+        setMessage("Add a fault before requesting a repair route.", true);
+        return;
+    }
