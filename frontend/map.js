@@ -965,3 +965,227 @@ function showRepairRoute() {
         setMessage("Add a fault before requesting a repair route.", true);
         return;
     }
+
+
+    
+    // Demonstration only; this is not the backend's Dijkstra result.
+    const depot = nodeLocations.depot;
+    const first = nodeLocations[connection.from];
+    const second = nodeLocations[connection.to];
+
+    state.repairRoute = L.polyline(
+        [depot, first, second],
+        {
+            color: "#58b9ed",
+            weight: 5,
+            dashArray: "5 7"
+        }
+    ).addTo(repairRouteLayer);
+
+    map.fitBounds(state.repairRoute.getBounds(), {
+        padding: [35, 35]
+    });
+
+    const approximateDistance =
+        distanceBetween(depot, first) +
+        distanceBetween(first, second);
+
+    getElement("routeMessage").textContent =
+        `Illustrative repair route: approximately ${formatDistance(approximateDistance)}. ` +
+        "The C++ backend will later calculate the shortest route.";
+
+    setMessage("Demonstration repair route displayed.", false);
+}
+
+// -------------------- Dijkstra Route Finder Demonstration --------------------
+
+// This runs on the simulated graph in the frontend.
+// Move this calculation to the C++ backend during integration.
+
+function findShortestPath(startId, endId) {
+    if (!nodeLocations[startId] || !nodeLocations[endId]) {
+        return null;
+    }
+
+    if (startId === endId) {
+        return {
+            nodes: [startId],
+            distance: 0
+        };
+    }
+
+    const graph = {};
+
+    Object.keys(nodeLocations).forEach(id => {
+        graph[id] = [];
+    });
+
+    connections.forEach(connection => {
+        if (
+            state.faults.has(connection.id) ||
+            !nodeLocations[connection.from] ||
+            !nodeLocations[connection.to]
+        ) {
+            return;
+        }
+
+        const weight = connectionDistance(connection);
+
+        graph[connection.from].push({
+            node: connection.to,
+            weight
+        });
+
+        graph[connection.to].push({
+            node: connection.from,
+            weight
+        });
+    });
+
+    const distances = {};
+    const previous = {};
+    const unvisited = new Set(Object.keys(graph));
+
+    Object.keys(graph).forEach(id => {
+        distances[id] = Infinity;
+        previous[id] = null;
+    });
+
+    distances[startId] = 0;
+
+    while (unvisited.size > 0) {
+        let current = null;
+        let shortest = Infinity;
+
+        for (const id of unvisited) {
+            if (distances[id] < shortest) {
+                shortest = distances[id];
+                current = id;
+            }
+        }
+
+        if (current === null || shortest === Infinity) {
+            break;
+        }
+
+        if (current === endId) {
+            break;
+        }
+
+        unvisited.delete(current);
+
+        graph[current].forEach(edge => {
+            if (!unvisited.has(edge.node)) return;
+
+            const alternative = distances[current] + edge.weight;
+
+            if (alternative < distances[edge.node]) {
+                distances[edge.node] = alternative;
+                previous[edge.node] = current;
+            }
+        });
+    }
+
+    if (distances[endId] === Infinity) {
+        return null;
+    }
+
+    const path = [];
+    let current = endId;
+
+    while (current !== null) {
+        path.unshift(current);
+        current = previous[current];
+    }
+
+    return {
+        nodes: path,
+        distance: distances[endId]
+    };
+}
+
+function findGridRoute() {
+    pathRouteLayer.clearLayers();
+    state.pathRoute = null;
+
+    const startId = getElement("startNodeSelect").value;
+    const endId = getElement("endNodeSelect").value;
+
+    // Show the selected endpoints even if the route cannot be found.
+    updateEnergyEndpoints(startId, endId);
+
+    if (!nodeLocations[startId] || !nodeLocations[endId]) {
+        getElement("pathMessage").textContent =
+            "Please select valid start and destination nodes.";
+        return;
+    }
+
+    if (startId === endId) {
+        getElement("pathMessage").textContent =
+            "Start and destination must be different nodes.";
+        getElement("pathDistance").textContent = "—";
+        getElement("pathSequence").textContent = "—";
+        return;
+    }
+
+    const result = findShortestPath(startId, endId);
+
+    if (!result) {
+        getElement("pathMessage").textContent =
+            "No available path found. A fault may be blocking the route.";
+        getElement("pathDistance").textContent = "—";
+        getElement("pathSequence").textContent = "No path";
+        return;
+    }
+
+    const coordinates = result.nodes.map(id => nodeLocations[id]);
+
+    state.pathRoute = L.polyline(coordinates, {
+        color: "#58b9ed",
+        weight: 6,
+        opacity: 0.95,
+        className: "route-highlight"
+    }).addTo(pathRouteLayer);
+
+    if (coordinates.length > 1) {
+        map.fitBounds(state.pathRoute.getBounds(), {
+            padding: [45, 45]
+        });
+    } else {
+        map.setView(coordinates[0], 15);
+    }
+
+    const routeNames = result.nodes.map(
+        id => nodeNames[id] || id
+    );
+
+    getElement("pathMessage").textContent =
+        "Demonstration route found using the current simulated grid.";
+
+    getElement("pathDistance").textContent = formatDistance(result.distance);
+    getElement("pathSequence").textContent = routeNames.join(" → ");
+
+    setMessage(
+        "A demonstration route was displayed. Final Dijkstra integration will use the C++ backend.",
+        false
+    );
+}
+
+function clearGridRoute() {
+    pathRouteLayer.clearLayers();
+    state.pathRoute = null;
+
+    getElement("pathMessage").textContent =
+        "Select a start node and destination.";
+
+    getElement("pathDistance").textContent = "—";
+    getElement("pathSequence").textContent = "—";
+
+    const startSelect = getElement("startNodeSelect");
+    const endSelect = getElement("endNodeSelect");
+
+    updateEnergyEndpoints(
+        startSelect ? startSelect.value : "",
+        endSelect ? endSelect.value : ""
+    );
+}
