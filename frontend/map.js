@@ -82,7 +82,7 @@ const state = {
     lines: {}
 };
 
-// -------------------- Map Setup --------------------
+//  Map Setup 
 
 const map = L.map("gridMap").setView([30.3250, 78.0500], 12);
 
@@ -273,7 +273,7 @@ function getLineStatus(load) {
     return "normal";
 }
 
-// -------------------- Distance Helpers --------------------
+//  Distance Helpers 
 
 // Haversine distance between two simulated map coordinates.
 function distanceBetween(a, b) {
@@ -301,7 +301,7 @@ function connectionDistance(connection) {
     );
 }
 
-// -------------------- Marker Creation --------------------
+//  Marker Creation 
 
 function createMarkerIcon(symbol, type, status = "") {
     return L.divIcon({
@@ -365,7 +365,7 @@ function setupStaticMarkers() {
     );
 }
 
-// -------------------- Connected Nodes --------------------
+//  Connected Nodes 
 
 function getConnectionsForNode(id) {
     return connections.filter(
@@ -408,7 +408,7 @@ function getNearestSubstation(coords) {
 }
 
 
-// -------------------- Draw Power Lines --------------------
+//  Draw Power Lines 
 
 function drawPowerLines() {
     lineLayer.clearLayers();
@@ -480,7 +480,7 @@ function drawPowerLines() {
     });
 }
 
-// -------------------- Load Markers --------------------
+// Load Markers 
 
 function drawLoadMarkers() {
     loadLayer.clearLayers();
@@ -514,7 +514,7 @@ function drawLoadMarkers() {
     });
 }
 
-// -------------------- Summary and Generation Panel --------------------
+//  Summary and Generation Panel 
 
 function updateSummary(data) {
     const totalDemand = state.loads.reduce(
@@ -540,7 +540,7 @@ function updateSummary(data) {
     getElement("sourceTotal").textContent = formatPower(data.totalGeneration);
 }
 
-// -------------------- Allocation Panel --------------------
+//  Allocation Panel 
 
 function updateAllocationPanel() {
     const container = getElement("allocationList");
@@ -600,7 +600,7 @@ function updateAllocationPanel() {
     });
 }
 
-// -------------------- Node Detail Panel --------------------
+//  Node Detail Panel 
 
 function setDetail(id, value) {
     const element = getElement(id);
@@ -742,7 +742,7 @@ function selectNode(id) {
 }
 
 
-// -------------------- Run Simulation --------------------
+//  Run Simulation 
 
 function runSimulation() {
     const data = readInputs();
@@ -774,7 +774,7 @@ function runSimulation() {
     );
 }
 
-// -------------------- Add New Load --------------------
+//  Add New Load 
 
 function findNearestSubstation(coords) {
     return getNearestSubstation(coords);
@@ -904,7 +904,7 @@ function addNewLoad() {
     }
 }
 
-// -------------------- Fault Simulation --------------------
+//  Fault Simulation 
 
 function addFault() {
     const selectedLine = getElement("faultLineSelect").value;
@@ -946,7 +946,7 @@ function clearFault() {
     setMessage("All simulated faults cleared.", false);
 }
 
-// -------------------- Repair Route Demonstration --------------------
+//  Repair Route Demonstration 
 
 function showRepairRoute() {
     repairRouteLayer.clearLayers();
@@ -997,7 +997,7 @@ function showRepairRoute() {
     setMessage("Demonstration repair route displayed.", false);
 }
 
-// -------------------- Dijkstra Route Finder Demonstration --------------------
+//  Dijkstra Route Finder Demonstration 
 
 // This runs on the simulated graph in the frontend.
 // Move this calculation to the C++ backend during integration.
@@ -1189,7 +1189,7 @@ function clearGridRoute() {
         endSelect ? endSelect.value : ""
     );
 }
-// -------------------- Search and Map Controls --------------------
+//  Search and Map Controls 
 
 function searchLocation() {
     const query = getElement("locationSearch").value.trim().toLowerCase();
@@ -1216,7 +1216,7 @@ function searchLocation() {
     setMessage(`Location found: ${nodeNames[target]}.`, false);
 }
 
-// -------------------- Reset --------------------
+//  Reset 
 
 function resetValues() {
     getElement("customLoadInputs").replaceChildren();
@@ -1334,7 +1334,7 @@ if (fullMapButton && mapPanel) {
     });
 }
 
-// -------------------- Event Listeners --------------------
+//  Event Listeners 
 
 getElement("simulationForm").addEventListener("submit", event => {
     event.preventDefault();
@@ -1387,7 +1387,7 @@ getElement("endNodeSelect").addEventListener("change", () => {
     );
 });
 
-// -------------------- Start --------------------
+//  Start 
 
 setupStaticMarkers();
 
