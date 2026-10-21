@@ -600,3 +600,143 @@ function updateAllocationPanel() {
     });
 }
 
+// -------------------- Node Detail Panel --------------------
+
+function setDetail(id, value) {
+    const element = getElement(id);
+    if (element) element.textContent = value;
+}
+
+function selectNode(id) {
+    state.selectedNode = id;
+
+    const name = nodeNames[id] || id;
+    const connected = getConnectedNodeNames(id);
+
+    // Selecting a node also displays it as the current endpoint.
+    const startSelect = getElement("startNodeSelect");
+    const startId = startSelect ? startSelect.value : "";
+
+    updateEnergyEndpoints(startId, id);
+
+    // Generation source details.
+    if (sourceInfo[id]) {
+        const data = readInputs();
+        const output = data.generation[id];
+        const connectionsForNode = getConnectionsForNode(id);
+
+        setDetail("selectedNodeName", `${sourceInfo[id].icon} ${name}`);
+        setDetail("detailType", sourceInfo[id].type);
+        setDetail("detailStatus", output > 0 ? "Generating" : "Inactive");
+        setDetail("detailRequired", "Not applicable");
+        setDetail("detailReceived", formatPower(output));
+        setDetail("detailDeficit", "—");
+        setDetail("detailPriority", "—");
+        setDetail("detailPercentage", output > 0 ? "100%" : "0%");
+        setDetail("detailCapacity", formatPower(output));
+        // Remaining Power detail was removed from the HTML.
+        setDetail("detailConnected", connected);
+        setDetail("detailSource", "Generation source");
+        setDetail("detailDistance", connectionsForNode.length
+            ? formatDistance(connectionDistance(connectionsForNode[0]))
+            : "—");
+
+        getElement("detailProgress").style.width = output > 0 ? "100%" : "0%";
+        getElement("detailProgress").style.background = "#32d18b";
+        return;
+    }
+
+    // Substation details.
+    if (substationNames[id]) {
+        const connectedLoads = state.loads.filter(load =>
+            getConnectionsForNode(id).some(connection =>
+                connection.loadId === load.id
+            )
+        );
+
+        const output = connectedLoads.reduce(
+            (sum, load) => sum + load.received, 0
+        );
+
+        const faulted = getConnectionsForNode(id).some(
+            connection => state.faults.has(connection.id)
+        );
+
+        setDetail("selectedNodeName", `⚡ ${name}`);
+        setDetail("detailType", "Substation / Transformer");
+        setDetail("detailStatus", faulted ? "Fault on connected line" : "Connected");
+        setDetail("detailRequired", formatPower(
+            connectedLoads.reduce((sum, load) => sum + load.required, 0)
+        ));
+        setDetail("detailReceived", formatPower(output));
+        setDetail("detailDeficit", formatPower(
+            connectedLoads.reduce((sum, load) => sum + load.deficit, 0)
+        ));
+        setDetail("detailPriority", "Multiple loads");
+        setDetail("detailPercentage", "—");
+        setDetail("detailCapacity", "Not configured");
+        setDetail("detailConnected", connected);
+        setDetail("detailSource", "Connected generation and grid lines");
+        setDetail("detailDistance", "Varies by route");
+
+        getElement("detailProgress").style.width = "0%";
+        getElement("detailProgress").style.background = "#32d18b";
+        return;
+    }
+
+    // Repair depot details.
+    if (id === "depot") {
+        setDetail("selectedNodeName", "🛠 Repair Depot");
+        setDetail("detailType", "Repair Team Depot");
+        setDetail("detailStatus", "Available for demonstration");
+        setDetail("detailRequired", "—");
+        setDetail("detailReceived", "—");
+        setDetail("detailDeficit", "—");
+        setDetail("detailPriority", "—");
+        setDetail("detailPercentage", "—");
+        setDetail("detailCapacity", "—");
+        setDetail("detailConnected", "No direct power connection");
+        setDetail("detailSource", "Repair location");
+        setDetail("detailDistance", "Use repair route");
+
+        getElement("detailProgress").style.width = "0%";
+        return;
+    }
+
+    // Load details.
+    const load = state.loads.find(item => item.id === id);
+
+    if (!load) {
+        setDetail("selectedNodeName", name);
+        setDetail("detailType", "Unknown node");
+        return;
+    }
+
+    const feeder = connections.find(connection => connection.loadId === id);
+    const sourceSubstation = feeder ? feeder.from : null;
+    const faulted = feeder && state.faults.has(feeder.id);
+
+    setDetail("selectedNodeName", `${load.icon} ${load.name}`);
+    setDetail("detailType", "Distribution Load");
+    setDetail("detailStatus", faulted ? "Fault on feeder" : load.status);
+    setDetail("detailRequired", formatPower(load.required));
+    setDetail("detailReceived", formatPower(load.received));
+    setDetail("detailDeficit", formatPower(load.deficit));
+    setDetail("detailPriority", getPriorityLabel(load.priority));
+    setDetail("detailPercentage", `${load.percentage}%`);
+    setDetail("detailCapacity", "—");
+    setDetail("detailConnected", sourceSubstation
+        ? nodeNames[sourceSubstation]
+        : connected);
+    setDetail("detailSource", sourceSubstation
+        ? nodeNames[sourceSubstation]
+        : "Not assigned");
+    setDetail("detailDistance", feeder
+        ? formatDistance(connectionDistance(feeder))
+        : "—");
+
+    getElement("detailProgress").style.width = `${load.percentage}%`;
+    getElement("detailProgress").style.background =
+        load.status === "Off" ? "#ff6565" :
+        load.status === "Limited" ? "#f2c14e" : "#32d18b";
+}
