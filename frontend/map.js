@@ -1189,3 +1189,116 @@ function clearGridRoute() {
         endSelect ? endSelect.value : ""
     );
 }
+// -------------------- Search and Map Controls --------------------
+
+function searchLocation() {
+    const query = getElement("locationSearch").value.trim().toLowerCase();
+
+    if (!query) {
+        setMessage("Enter a location name to search.", true);
+        return;
+    }
+
+    const target = Object.keys(nodeNames).find(id =>
+        nodeNames[id].toLowerCase().includes(query) ||
+        id.toLowerCase().includes(query)
+    );
+
+    if (!target || !state.markers[target]) {
+        setMessage("No matching grid location found.", true);
+        return;
+    }
+
+    map.setView(nodeLocations[target], 15);
+    state.markers[target].openTooltip();
+    selectNode(target);
+
+    setMessage(`Location found: ${nodeNames[target]}.`, false);
+}
+
+// -------------------- Reset --------------------
+
+function resetValues() {
+    getElement("customLoadInputs").replaceChildren();
+
+    const faultSelect = getElement("faultLineSelect");
+
+    Array.from(faultSelect.options).forEach(option => {
+        if (option.value.startsWith("line-custom")) {
+            option.remove();
+        }
+    });
+
+    state.customLoads.forEach(load => {
+        delete state.markers[load.id];
+        delete nodeLocations[load.id];
+        delete nodeNames[load.id];
+    });
+
+    state.customLoads = [];
+    state.nextCustomId = 1;
+
+    loadDefinitions.splice(
+        0,
+        loadDefinitions.length,
+        ...originalLoads.map(load => ({ ...load }))
+    );
+
+    for (let i = connections.length - 1; i >= 0; i--) {
+        if (connections[i].loadId?.startsWith("custom")) {
+            connections.splice(i, 1);
+        }
+    }
+
+    // Remove custom route choices and restore default choices.
+    ["startNodeSelect", "endNodeSelect"].forEach(selectId => {
+        const select = getElement(selectId);
+
+        Array.from(select.options).forEach(option => {
+            if (option.value.startsWith("custom")) {
+                option.remove();
+            }
+        });
+    });
+
+    getElement("solarInput").value = defaultValues.solar;
+    getElement("hydroInput").value = defaultValues.hydro;
+    getElement("windInput").value = defaultValues.wind;
+
+    getElement("hospitalInput").value = defaultValues.hospital;
+    getElement("schoolInput").value = defaultValues.school;
+    getElement("collegeInput").value = defaultValues.college;
+    getElement("residentialInput").value = defaultValues.residential;
+    getElement("shoppingInput").value = defaultValues.shopping;
+
+    getElement("availablePower").value = defaultValues.available;
+
+    getElement("newLoadName").value = "";
+    getElement("newLoadPower").value = "";
+    getElement("addLoadMessage").textContent = "";
+
+    state.faults.clear();
+    state.repairRoute = null;
+    state.selectedNode = null;
+
+    repairRouteLayer.clearLayers();
+    clearGridRoute();
+
+    getElement("routeMessage").textContent =
+        "Add a fault to request a repair route.";
+
+    getElement("faultLineSelect").value = "line-hospital";
+    getElement("startNodeSelect").value = "solar";
+    getElement("endNodeSelect").value = "hospital";
+
+    updateEnergyEndpoints("solar", "hospital");
+
+    map.setView([30.3250, 78.0500], 12);
+
+    try {
+        runSimulation();
+        setMessage("Values reset to the original sample scenario.", false);
+    } catch (error) {
+        setMessage(error.message, true);
+    }
+}
