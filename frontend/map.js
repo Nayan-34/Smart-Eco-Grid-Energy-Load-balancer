@@ -219,3 +219,190 @@ function readInputs() {
         totalGeneration
     };
 }
+// -------------------- Priority-Based Allocation --------------------
+
+function calculateAllocation(data) {
+    let remainingPower = data.available;
+
+    const sortedLoads = loadDefinitions
+        .map((definition, index) => ({
+            ...definition,
+            required: data.requirements[definition.id],
+            originalOrder: index
+        }))
+        .sort((a, b) =>
+            a.priority - b.priority ||
+            a.originalOrder - b.originalOrder
+        );
+
+    return sortedLoads.map(load => {
+        const received = Math.min(load.required, remainingPower);
+        remainingPower -= received;
+
+        let status;
+
+        if (load.required === 0 || received >= load.required) {
+            status = "Active";
+        } else if (received > 0) {
+            status = "Limited";
+        } else {
+            status = "Off";
+        }
+
+        return {
+            ...load,
+            received,
+            deficit: Math.max(0, load.required - received),
+            status,
+            percentage: load.required === 0
+                ? 100
+                : Math.round((received / load.required) * 100)
+        };
+    });
+}
+
+function getLineStatus(load) {
+    if (state.faults.has(`line-${load.id}`)) {
+        return "fault";
+    }
+
+    if (load.received < load.required) {
+        return "limited";
+    }
+
+    return "normal";
+}
+
+// -------------------- Distance Helpers --------------------
+
+// Haversine distance between two simulated map coordinates.
+function distanceBetween(a, b) {
+    const earthRadiusKm = 6371;
+    const toRadians = degrees => degrees * Math.PI / 180;
+
+    const lat1 = toRadians(a[0]);
+    const lat2 = toRadians(b[0]);
+    const deltaLat = toRadians(b[0] - a[0]);
+    const deltaLng = toRadians(b[1] - a[1]);
+
+    const value =
+        Math.sin(deltaLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(deltaLng / 2) ** 2;
+
+    return earthRadiusKm * 2 *
+        Math.atan2(Math.sqrt(value), Math.sqrt(1 - value));
+}
+
+function connectionDistance(connection) {
+    return distanceBetween(
+        nodeLocations[connection.from],
+        nodeLocations[connection.to]
+    );
+}
+
+// -------------------- Marker Creation --------------------
+
+function createMarkerIcon(symbol, type, status = "") {
+    return L.divIcon({
+        className: "",
+        html: `<div class="grid-marker ${type} ${status}">${symbol}</div>`,
+        iconSize: [38, 38],
+        iconAnchor: [19, 19]
+    });
+}
+
+function addLocationMarker(id, name, coords, symbol, type, layer) {
+    const marker = L.marker(coords, {
+        icon: createMarkerIcon(symbol, type)
+    }).addTo(layer);
+
+    marker.bindTooltip(name, {
+        direction: "top",
+        className: "grid-tooltip"
+    });
+
+    marker.on("click", () => selectNode(id));
+
+    state.markers[id] = marker;
+    return marker;
+}
+
+function setupStaticMarkers() {
+    addLocationMarker(
+        "solar", "Solar Farm", nodeLocations.solar,
+        "☀", "source", sourceLayer
+    );
+
+    addLocationMarker(
+        "hydro", "Hydro Plant", nodeLocations.hydro,
+        "≈", "source", sourceLayer
+    );
+
+    addLocationMarker(
+        "wind", "Wind Farm", nodeLocations.wind,
+        "✣", "source", sourceLayer
+    );
+
+    addLocationMarker(
+        "substationA", "Substation A", nodeLocations.substationA,
+        "⚡", "substation", substationLayer
+    );
+
+    addLocationMarker(
+        "substationB", "Substation B", nodeLocations.substationB,
+        "⚡", "substation", substationLayer
+    );
+
+    addLocationMarker(
+        "substationC", "Substation C", nodeLocations.substationC,
+        "⚡", "substation", substationLayer
+    );
+
+    addLocationMarker(
+        "depot", "Repair Depot", nodeLocations.depot,
+        "🛠", "substation", substationLayer
+    );
+}
+
+// -------------------- Connected Nodes --------------------
+
+function getConnectionsForNode(id) {
+    return connections.filter(
+        connection => connection.from === id || connection.to === id
+    );
+}
+
+function getConnectedNodeNames(id) {
+    const names = getConnectionsForNode(id).map(connection => {
+        const otherId = connection.from === id
+            ? connection.to
+            : connection.from;
+
+        return nodeNames[otherId] || otherId;
+    });
+
+    return names.length ? [...new Set(names)].join(", ") : "No connections";
+}
+
+function getNearestSubstation(coords) {
+    const substations = [
+        "substationA",
+        "substationB",
+        "substationC"
+    ];
+
+    let nearest = null;
+    let shortestDistance = Infinity;
+
+    substations.forEach(id => {
+        const distance = distanceBetween(coords, nodeLocations[id]);
+
+        if (distance < shortestDistance) {
+            shortestDistance = distance;
+            nearest = id;
+        }
+    });
+
+    return nearest;
+}
