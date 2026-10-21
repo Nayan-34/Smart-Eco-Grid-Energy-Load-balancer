@@ -1302,3 +1302,102 @@ function resetValues() {
         setMessage(error.message, true);
     }
 }
+// -------------------- Full Map Button --------------------
+
+const fullMapButton = getElement("fullMapButton");
+const mapPanel = document.querySelector(".map-panel");
+
+if (fullMapButton && mapPanel) {
+    fullMapButton.addEventListener("click", async () => {
+        try {
+            if (!document.fullscreenElement) {
+                await mapPanel.requestFullscreen();
+            } else {
+                await document.exitFullscreen();
+            }
+        } catch (error) {
+            console.error("Unable to open fullscreen map:", error);
+            setMessage("Unable to open fullscreen map.", true);
+        }
+    });
+
+    // Update the button text and Leaflet map after fullscreen changes.
+    document.addEventListener("fullscreenchange", () => {
+        fullMapButton.textContent = document.fullscreenElement
+            ? "✕ Exit Full Map"
+            : "⛶ Full Map";
+
+        // Leaflet needs to recalculate its dimensions after fullscreen.
+        requestAnimationFrame(() => {
+            map.invalidateSize();
+        });
+    });
+}
+
+// -------------------- Event Listeners --------------------
+
+getElement("simulationForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    try {
+        runSimulation();
+    } catch (error) {
+        setMessage(error.message, true);
+    }
+});
+
+getElement("addLoadButton").addEventListener("click", addNewLoad);
+getElement("resetButton").addEventListener("click", resetValues);
+getElement("addFaultButton").addEventListener("click", addFault);
+getElement("clearFaultButton").addEventListener("click", clearFault);
+getElement("repairRouteButton").addEventListener("click", showRepairRoute);
+
+getElement("clearRouteButton").addEventListener("click", () => {
+    repairRouteLayer.clearLayers();
+    state.repairRoute = null;
+    getElement("routeMessage").textContent = "Repair route cleared.";
+});
+
+getElement("findPathButton").addEventListener("click", findGridRoute);
+getElement("clearPathButton").addEventListener("click", clearGridRoute);
+getElement("searchButton").addEventListener("click", searchLocation);
+
+getElement("locationSearch").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        searchLocation();
+    }
+});
+
+getElement("zoomInButton").addEventListener("click", () => map.zoomIn());
+getElement("zoomOutButton").addEventListener("click", () => map.zoomOut());
+
+// Keep endpoint labels in sync with the route selectors.
+getElement("startNodeSelect").addEventListener("change", () => {
+    updateEnergyEndpoints(
+        getElement("startNodeSelect").value,
+        getElement("endNodeSelect").value
+    );
+});
+
+getElement("endNodeSelect").addEventListener("change", () => {
+    updateEnergyEndpoints(
+        getElement("startNodeSelect").value,
+        getElement("endNodeSelect").value
+    );
+});
+
+// -------------------- Start --------------------
+
+setupStaticMarkers();
+
+updateEnergyEndpoints(
+    getElement("startNodeSelect").value,
+    getElement("endNodeSelect").value
+);
+
+try {
+    runSimulation();
+} catch (error) {
+    setMessage(error.message, true);
+}
