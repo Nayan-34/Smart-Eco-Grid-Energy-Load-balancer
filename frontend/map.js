@@ -406,3 +406,197 @@ function getNearestSubstation(coords) {
 
     return nearest;
 }
+
+
+// -------------------- Draw Power Lines --------------------
+
+function drawPowerLines() {
+    lineLayer.clearLayers();
+    state.lines = {};
+
+    connections.forEach(connection => {
+        const load = connection.loadId
+            ? state.loads.find(item => item.id === connection.loadId)
+            : null;
+
+        let status = "normal";
+
+        if (state.faults.has(connection.id)) {
+            status = "fault";
+        } else if (load) {
+            status = getLineStatus(load);
+        }
+
+        const styles = {
+            normal: {
+                color: "#32d18b",
+                weight: 3,
+                opacity: 0.9
+            },
+            limited: {
+                color: "#f2c14e",
+                weight: 3,
+                dashArray: "7 6",
+                opacity: 0.95
+            },
+            fault: {
+                color: "#ff6565",
+                weight: 4,
+                dashArray: "8 7",
+                opacity: 1
+            }
+        };
+
+        const points = [
+            nodeLocations[connection.from],
+            nodeLocations[connection.to]
+        ];
+
+        // Main connection line.
+        const line = L.polyline(points, {
+            ...styles[status],
+            interactive: true
+        }).addTo(lineLayer);
+
+        line.bindTooltip(
+            `${connection.id.replace("line-", "")}: ${status.toUpperCase()}`,
+            { className: "grid-tooltip" }
+        );
+
+        state.lines[connection.id] = line;
+
+        // Animated overlay for simulated energy flow.
+        // The CSS class controls the moving dashes and their colors.
+        if (status !== "fault") {
+            L.polyline(points, {
+                className: `power-flow-line ${status === "limited" ? "limited" : ""}`,
+                color: status === "limited" ? "#f2c14e" : "#32d18b",
+                weight: 4,
+                opacity: 1,
+                interactive: false,
+                bubblingMouseEvents: false
+            }).addTo(lineLayer);
+        }
+    });
+}
+
+// -------------------- Load Markers --------------------
+
+function drawLoadMarkers() {
+    loadLayer.clearLayers();
+
+    loadDefinitions.forEach(load => {
+        delete state.markers[load.id];
+    });
+
+    state.loads.forEach(load => {
+        const coords = nodeLocations[load.id];
+        if (!coords) return;
+
+        const lineStatus = getLineStatus(load);
+
+        const visualStatus =
+            lineStatus === "fault" ? "fault" :
+            lineStatus === "limited" ? "limited" :
+            load.status === "Off" ? "off" : "active";
+
+        const marker = L.marker(coords, {
+            icon: createMarkerIcon(load.icon, "load", visualStatus)
+        }).addTo(loadLayer);
+
+        marker.bindTooltip(
+            `${load.name}<br>${formatPower(load.received)} / ${formatPower(load.required)}`,
+            { className: "grid-tooltip" }
+        );
+
+        marker.on("click", () => selectNode(load.id));
+        state.markers[load.id] = marker;
+    });
+}
+
+// -------------------- Summary and Generation Panel --------------------
+
+function updateSummary(data) {
+    const totalDemand = state.loads.reduce(
+        (sum, load) => sum + load.required, 0
+    );
+
+    const totalAllocated = state.loads.reduce(
+        (sum, load) => sum + load.received, 0
+    );
+
+    getElement("totalGeneration").textContent =
+        formatPower(data.totalGeneration);
+
+    getElement("totalDemand").textContent = formatPower(totalDemand);
+    getElement("totalAllocated").textContent = formatPower(totalAllocated);
+
+    getElement("unservedDemand").textContent =
+        formatPower(totalDemand - totalAllocated);
+
+    getElement("solarValue").textContent = formatPower(data.generation.solar);
+    getElement("hydroValue").textContent = formatPower(data.generation.hydro);
+    getElement("windValue").textContent = formatPower(data.generation.wind);
+    getElement("sourceTotal").textContent = formatPower(data.totalGeneration);
+}
+
+// -------------------- Allocation Panel --------------------
+
+function updateAllocationPanel() {
+    const container = getElement("allocationList");
+    container.replaceChildren();
+
+    state.loads.forEach(load => {
+        const item = document.createElement("div");
+        item.className = "allocation-item";
+
+        const top = document.createElement("div");
+        top.className = "allocation-top";
+
+        const nameBlock = document.createElement("div");
+
+        const name = document.createElement("div");
+        name.className = "allocation-name";
+        name.textContent = `${load.icon} ${load.name}`;
+
+        const priority = document.createElement("div");
+        priority.className = "priority-label";
+        priority.textContent =
+            `${getPriorityLabel(load.priority)} · ${load.status}`;
+
+        nameBlock.append(name, priority);
+
+        const value = document.createElement("div");
+        value.className = "allocation-value";
+        value.textContent =
+            `${load.received.toLocaleString()} / ${load.required.toLocaleString()} kW`;
+
+        top.append(nameBlock, value);
+
+        const track = document.createElement("div");
+        track.className = "allocation-track";
+
+        const fill = document.createElement("div");
+        fill.className = "allocation-fill";
+
+        if (load.status === "Limited") fill.classList.add("limited");
+        if (load.status === "Off") fill.classList.add("off");
+
+        fill.style.width = `${load.percentage}%`;
+        track.appendChild(fill);
+
+        item.append(top, track);
+
+        item.addEventListener("click", () => {
+            selectNode(load.id);
+
+            if (state.markers[load.id]) {
+                map.setView(nodeLocations[load.id], 15);
+                state.markers[load.id].openTooltip();
+            }
+        });
+
+        container.appendChild(item);
+    });
+}
+
