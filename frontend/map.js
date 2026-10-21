@@ -740,3 +740,131 @@ function selectNode(id) {
         load.status === "Off" ? "#ff6565" :
         load.status === "Limited" ? "#f2c14e" : "#32d18b";
 }
+
+
+// -------------------- Run Simulation --------------------
+
+function runSimulation() {
+    const data = readInputs();
+
+    state.loads = calculateAllocation(data);
+
+    updateSummary(data);
+    updateAllocationPanel();
+    drawPowerLines();
+    drawLoadMarkers();
+
+    if (
+        state.selectedNode &&
+        (
+            state.loads.some(load => load.id === state.selectedNode) ||
+            sourceInfo[state.selectedNode] ||
+            substationNames[state.selectedNode] ||
+            state.selectedNode === "depot"
+        )
+    ) {
+        selectNode(state.selectedNode);
+    } else {
+        selectNode("hospital");
+    }
+
+    setMessage(
+        `Simulation complete. ${formatPower(data.available)} available for allocation.`,
+        false
+    );
+}
+
+// -------------------- Add New Load --------------------
+
+function findNearestSubstation(coords) {
+    return getNearestSubstation(coords);
+}
+
+function addNewLoad() {
+    const nameInput = getElement("newLoadName");
+    const powerInput = getElement("newLoadPower");
+    const priorityInput = getElement("newLoadPriority");
+    const message = getElement("addLoadMessage");
+
+    const name = nameInput.value.trim();
+    const power = Number(powerInput.value);
+    const priority = Number(priorityInput.value);
+
+    if (!name) {
+        message.textContent = "Please enter a load name.";
+        return;
+    }
+
+    if (
+        powerInput.value.trim() === "" ||
+        !Number.isFinite(power) ||
+        power < 1 ||
+        power > 1000000
+    ) {
+        message.textContent =
+            "Enter a power demand between 1 and 1,000,000 kW.";
+        return;
+    }
+
+    if (![1, 2, 3].includes(priority)) {
+        message.textContent = "Select a valid priority.";
+        return;
+    }
+
+    const duplicate = loadDefinitions.some(
+        load => load.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (duplicate) {
+        message.textContent = "A load with this name already exists.";
+        return;
+    }
+
+    const id = `custom${state.nextCustomId}`;
+    const index = state.customLoads.length;
+
+    const coords = [
+        30.295 + (index % 3) * 0.008,
+        78.025 + Math.floor(index / 3) * 0.012
+    ];
+
+    const load = {
+        id,
+        name,
+        icon: "🏢",
+        priority
+    };
+
+    state.nextCustomId++;
+    state.customLoads.push(load);
+    loadDefinitions.push(load);
+    nodeLocations[id] = coords;
+    nodeNames[id] = name;
+
+    const nearest = findNearestSubstation(coords);
+
+    connections.push({
+        id: `line-${id}`,
+        from: nearest,
+        to: id,
+        loadId: id
+    });
+
+    // Add the custom feeder to the fault selector.
+    const faultSelect = getElement("faultLineSelect");
+    const faultOption = document.createElement("option");
+
+    faultOption.value = `line-${id}`;
+    faultOption.textContent = `${name} feeder`;
+    faultSelect.appendChild(faultOption);
+
+    // Allow the new load to be selected as a route endpoint.
+    ["startNodeSelect", "endNodeSelect"].forEach(selectId => {
+        const select = getElement(selectId);
+        const option = document.createElement("option");
+
+        option.value = id;
+        option.textContent = name;
+        select.appendChild(option);
+    });
+
