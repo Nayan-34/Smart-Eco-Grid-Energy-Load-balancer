@@ -1,13 +1,15 @@
-
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <fstream>
+#include <nlohmann/json.hpp>
 #include "energy_load.h"
 #include "fault_manager.h"
 #include "route_optimizer.h"
 #include "repair_team_manager.h"
 
 using namespace std;
+using json = nlohmann::json;
 
 int main()
 {
@@ -95,24 +97,14 @@ int main()
              << pathResult.totalDistance << endl;
     }
 
-    cout << "\n--- Road Route using OSRM ---" << endl;
+    json outputJson;
+    outputJson["totalAllocatedPower"] = manager.totalAllocatedPower_kW;
+    outputJson["shortestPathDistance"] = pathResult.totalDistance;
+    outputJson["shortestPathNodes"] = pathResult.path;
 
-    Location teamLocation = {30.3165, 78.0322};
-    Location faultLocation = {30.3250, 78.0410};
-
-    RouteResult roadResult =
-        route.findShortestRoute(teamLocation, faultLocation);
-
-    if (roadResult.success)
-    {
-        cout << fixed << setprecision(2);
-        cout << "Road distance: "
-             << roadResult.distanceKm << " km" << endl;
-        cout << "Travel time: "
-             << roadResult.durationMinutes << " minutes" << endl;
-        cout << "Route geometry: "
-             << roadResult.geometry << endl;
-    }
+    ofstream outFile("backend_output.json");
+    outFile << outputJson.dump(4);
+    outFile.close();
 
     cout << "\nEco-Grid backend execution completed." << endl;
 
