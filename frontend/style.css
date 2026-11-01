@@ -1036,3 +1036,58 @@ footer p {
     outline: 2px solid #4f7657;
     outline-offset: 3px;
 }
+
+/* 3D CITY SECTION */
+
+.city-3d-container {
+    position: relative;
+    width: 100%;
+    height: 550px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #101827;
+    border: 1px solid #34445a;
+}
+
+.city-3d-container canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.city-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.city-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+.city-legend span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.city-legend .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .city-3d-container {
+        height: 380px;
+    }
+}
