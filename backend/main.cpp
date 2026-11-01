@@ -28,108 +28,46 @@ int main()
     manager.processGrid(grid);
 
     FaultManager faultManager;
+    faultManager.loadFaultsFromFile();
 
     cout << "\n--- Fault Detection ---" << endl;
     
-    // fault details
+    // fault 1 details
     int faultID1 = 1;
     string location1 = "Substation B";
     double voltage1 = 185;
     double load1 = 80;
+    double latitude1 = 30.3165;
+    double longitude1 = 78.0322;
 
+    // fault 2 details
     int faultID2 = 2;
     string location2 = "Substation C";
     double voltage2 = 220;
     double load2 = 120;
+    double latitude2 = 30.3250;
+    double longitude2 = 78.0400;
 
-     // Fault detection
-    faultManager.checkFault(
-        faultID1,
-        location1,
-        voltage1,
-        load1
-    );
-
-    faultManager.checkFault(
-        faultID2,
-        location2,
-        voltage2,
-        load2
-    );
+    // Fault detection
+    faultManager.checkFault(faultID1,location1,voltage1,load1,latitude1,longitude1);
+    faultManager.checkFault(faultID2,location2,voltage2,load2,latitude2,longitude2);
     faultManager.showFaults();
 
-    // ================= FILE HANDLING =================
-
-    ofstream faultFile("faults.txt", ios::app);
-
-    if (faultFile)
-    {
-        faultFile << "SMART ECO-GRID FAULT RECORD" << endl;
-        faultFile << "-----------------------------" << endl;
-
-        faultFile << "Fault ID : " << faultID1 << endl;
-        faultFile << "Location : " << location1 << endl;
-        faultFile << "Voltage  : " << voltage1 << " V" << endl;
-        faultFile << "Load     : " << load1 << " MW" << endl;
-
-        if (voltage1 < 210)
-        {
-            faultFile << "Fault    : Low Voltage" << endl;
-
-            if (voltage1 < 190)
-                faultFile << "Severity : High" << endl;
-            else
-                faultFile << "Severity : Medium" << endl;
-        }
-
-        faultFile << "Status   : Active" << endl;
-        faultFile << "-----------------------------" << endl;
-
-        faultFile << "Fault ID : " << faultID2 << endl;
-        faultFile << "Location : " << location2 << endl;
-        faultFile << "Voltage  : " << voltage2 << " V" << endl;
-        faultFile << "Load     : " << load2 << " MW" << endl;
-
-        if (voltage2 < 210)
-        {
-            faultFile << "Fault    : Low Voltage" << endl;
-
-            if (voltage2 < 190)
-                faultFile << "Severity : High" << endl;
-            else
-                faultFile << "Severity : Medium" << endl;
-        }
-        else if (load2 > 100)
-        {
-            faultFile << "Fault    : Overload" << endl;
-
-            if (load2 > 150)
-                faultFile << "Severity : High" << endl;
-            else
-                faultFile << "Severity : Medium" << endl;
-        }
-
-        faultFile << "Status   : Active" << endl;
-        faultFile << "-----------------------------" << endl;
-
-        faultFile.close();
-
-        cout << "\nFault data saved to faults.txt" << endl;
-    }
-    else
-    {
-        cout << "\nError opening faults.txt" << endl;
-    }
-
+   
     RepairTeamManager repairManager;
+    repairManager.loadTeamsFromFile();
 
     cout << "\n--- Repair Team Management ---" << endl;
-    repairManager.addTeam("Team Alpha");
-    repairManager.addTeam("Team Beta");
-    repairManager.addTeam("Team Gamma");
-
+    repairManager.addTeam(RepairTeam(1, "Team Alpha", 30.3200, 78.0300));
+    repairManager.addTeam(RepairTeam(2, "Team Beta", 30.3300, 78.0500));
+    repairManager.addTeam(RepairTeam(3, "Team Gamma", 30.3100, 78.0200));
     repairManager.showTeams();
-    repairManager.assignTeam();
+
+    // ASSIGN NEAREST TEAM TO FAULT
+    cout << "\n--- Assigning Repair Team ---" << endl;
+    repairManager.assignTeam(latitude1, longitude1 );
+
+    // Display updated team status
     repairManager.showTeams();
 
     cout << "\n--- Dijkstra Route Optimization ---" << endl;
@@ -190,8 +128,19 @@ int main()
     outputJson["shortestPathNodes"] = pathResult.path;
 
     ofstream outFile("backend_output.json");
-    outFile << outputJson.dump(4);
-    outFile.close();
+    if (outFile)
+    {
+        outFile << outputJson.dump(4);
+        outFile.close();
+
+        cout << "\nBackend output saved to backend_output.json"
+             << endl;
+    }
+    else
+    {
+        cout << "\nError opening backend_output.json"
+             << endl;
+    }
 
     cout << "\nEco-Grid backend execution completed." << endl;
 
