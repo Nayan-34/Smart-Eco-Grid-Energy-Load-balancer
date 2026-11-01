@@ -30,9 +30,96 @@ int main()
     FaultManager faultManager;
 
     cout << "\n--- Fault Detection ---" << endl;
-    faultManager.checkFault(1, "Substation B", 185, 80);
-    faultManager.checkFault(2, "Substation C", 220, 120);
+    
+    // fault details
+    int faultID1 = 1;
+    string location1 = "Substation B";
+    double voltage1 = 185;
+    double load1 = 80;
+
+    int faultID2 = 2;
+    string location2 = "Substation C";
+    double voltage2 = 220;
+    double load2 = 120;
+
+     // Fault detection
+    faultManager.checkFault(
+        faultID1,
+        location1,
+        voltage1,
+        load1
+    );
+
+    faultManager.checkFault(
+        faultID2,
+        location2,
+        voltage2,
+        load2
+    );
     faultManager.showFaults();
+
+    // ================= FILE HANDLING =================
+
+    ofstream faultFile("faults.txt", ios::app);
+
+    if (faultFile)
+    {
+        faultFile << "SMART ECO-GRID FAULT RECORD" << endl;
+        faultFile << "-----------------------------" << endl;
+
+        faultFile << "Fault ID : " << faultID1 << endl;
+        faultFile << "Location : " << location1 << endl;
+        faultFile << "Voltage  : " << voltage1 << " V" << endl;
+        faultFile << "Load     : " << load1 << " MW" << endl;
+
+        if (voltage1 < 210)
+        {
+            faultFile << "Fault    : Low Voltage" << endl;
+
+            if (voltage1 < 190)
+                faultFile << "Severity : High" << endl;
+            else
+                faultFile << "Severity : Medium" << endl;
+        }
+
+        faultFile << "Status   : Active" << endl;
+        faultFile << "-----------------------------" << endl;
+
+        faultFile << "Fault ID : " << faultID2 << endl;
+        faultFile << "Location : " << location2 << endl;
+        faultFile << "Voltage  : " << voltage2 << " V" << endl;
+        faultFile << "Load     : " << load2 << " MW" << endl;
+
+        if (voltage2 < 210)
+        {
+            faultFile << "Fault    : Low Voltage" << endl;
+
+            if (voltage2 < 190)
+                faultFile << "Severity : High" << endl;
+            else
+                faultFile << "Severity : Medium" << endl;
+        }
+        else if (load2 > 100)
+        {
+            faultFile << "Fault    : Overload" << endl;
+
+            if (load2 > 150)
+                faultFile << "Severity : High" << endl;
+            else
+                faultFile << "Severity : Medium" << endl;
+        }
+
+        faultFile << "Status   : Active" << endl;
+        faultFile << "-----------------------------" << endl;
+
+        faultFile.close();
+
+        cout << "\nFault data saved to faults.txt" << endl;
+    }
+    else
+    {
+        cout << "\nError opening faults.txt" << endl;
+    }
 
     RepairTeamManager repairManager;
 
