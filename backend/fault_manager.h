@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 enum FaultType
@@ -41,5 +42,9 @@ public:
                     double voltage, double load, double latitude, double longitude);
     void showFaults();
     void resolveFault(int faultId);
+
+    // File handling functions
+    void saveFaultsToFile();
+    void loadFaultsFromFile();
 };
 #endif
