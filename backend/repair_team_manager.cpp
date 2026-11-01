@@ -2,6 +2,8 @@
 #include "route_optimizer.h"
 #include <cmath>
 #include <cfloat>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -38,6 +40,7 @@ void RepairTeamManager::addTeam(RepairTeam team)
         teams[teamSize] = team;
         teamSize++;
         cout << "Repair team added successfully." << endl;
+        saveTeamsToFile();
     }
      else
     {
@@ -108,7 +111,8 @@ void RepairTeamManager::assignTeam(double faultLatitude,
     }
     // Mark selected team as busy
     teams[selectedTeam].available = false;
-
+    saveTeamsToFile();
+    
     cout << "\n--- Team Assignment ---" << endl;
 
     cout << "Selected Team   : "
@@ -142,4 +146,71 @@ void RepairTeamManager::assignTeam(double faultLatitude,
         faultLongitude
     );
 }
+// Save Repair Teams to File
+void RepairTeamManager::saveTeamsToFile()
+{
+    ofstream file("repair_teams.txt");
 
+    if (!file)
+    {
+        cout << "\nError: Unable to open repair_teams.txt"
+             << endl;
+        return;
+    }
+
+    for (int i = 0; i < teamSize; i++)
+    {
+        file << teams[i].id << "|"
+             << teams[i].name << "|"
+             << teams[i].available << "|"
+             << teams[i].latitude << "|"
+             << teams[i].longitude
+             << endl;
+    }
+
+    file.close();
+}
+
+
+// Load Repair Teams from File
+void RepairTeamManager::loadTeamsFromFile()
+{
+    ifstream file("repair_teams.txt");
+
+    if (!file)
+    {
+        // File does not exist yet
+        return;
+    }
+
+    teamSize = 0;
+
+    string line;
+
+    while (getline(file, line) && teamSize < 5)
+    {
+        stringstream ss(line);
+
+        string id;
+        string name;
+        string available;
+        string latitude;
+        string longitude;
+
+        getline(ss, id, '|');
+        getline(ss, name, '|');
+        getline(ss, available, '|');
+        getline(ss, latitude, '|');
+        getline(ss, longitude, '|');
+
+        teams[teamSize].id = stoi(id);
+        teams[teamSize].name = name;
+        teams[teamSize].available = stoi(available);
+        teams[teamSize].latitude = stod(latitude);
+        teams[teamSize].longitude = stod(longitude);
+
+        teamSize++;
+    }
+
+    file.close();
+}
