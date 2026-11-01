@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,33 +9,62 @@
 </head>
 <body>
 
-    <!-- Main heading and current simulation status -->
     <header class="main-header">
         <div>
             <p class="eyebrow">POWER GRID MONITORING</p>
             <h1>Smart Eco-Grid Management System</h1>
-            <p class="header-subtitle">Energy monitoring, load management and fault handling</p>
+            <p class="header-subtitle">
+                Energy monitoring, load management and fault handling
+            </p>
         </div>
         <div class="header-status">
             <span class="live-dot"></span>
             <span>Simulation Mode</span>
         </div>
     </header>
-    <!-- Link to the  grid map page -->
-<a href="map.html" class="map-page-link">
-    View Grid Map
-</a>
+
+    <a href="map.html" class="map-page-link">View Grid Map</a>
 
     <main class="dashboard">
 
-        <!-- A reminder that the dashboard uses simulated readings -->
         <div class="notice">
             <strong>Prototype notice:</strong>
             The project currently uses sample and simulated data for testing.
             It does not use real-time data from physical grid sensors.
         </div>
 
-        <!-- Main grid readings and the current power balance -->
+        <!-- 3D SMART ECO-GRID CITY -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">3D GRID VISUALIZATION</p>
+                    <h2>Smart Eco-Grid City</h2>
+                    <p>
+                        Three-dimensional representation of seven connected
+                        grid nodes and their transmission connections.
+                    </p>
+                </div>
+                <span class="time-label">3D Simulation</span>
+            </div>
+
+            <div class="city-3d-container" id="city3D">
+                <div class="city-loading" id="cityLoading">
+                    Loading 3D City...
+                </div>
+            </div>
+
+            <div class="city-legend">
+                <span><i class="legend-dot" style="background:#ffaa00"></i> Power Plant</span>
+                <span><i class="legend-dot" style="background:#2196f3"></i> Hospital</span>
+                <span><i class="legend-dot" style="background:#9c27b0"></i> Telecom</span>
+                <span><i class="legend-dot" style="background:#00bcd4"></i> Water Plant</span>
+                <span><i class="legend-dot" style="background:#4caf50"></i> School</span>
+                <span><i class="legend-dot" style="background:#ffffff"></i> Offices</span>
+                <span><i class="legend-dot" style="background:#ff5722"></i> Suburbs</span>
+            </div>
+        </section>
+
+        <!-- GRID OVERVIEW -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -45,7 +75,6 @@
                 <span class="time-label" id="lastUpdated">Waiting for update</span>
             </div>
 
-            <!-- Four cards showing the main grid readings -->
             <div class="overview-grid">
                 <article class="metric-card">
                     <span class="metric-label">Total Generation</span>
@@ -72,7 +101,6 @@
                 </article>
             </div>
 
-            <!-- Visual bar showing generation compared with demand -->
             <div class="balance-panel">
                 <div class="balance-top">
                     <div>
@@ -81,16 +109,19 @@
                     </div>
                     <span id="balanceBadge" class="status-badge status-good">SURPLUS</span>
                 </div>
+
                 <div class="balance-track">
                     <div id="balanceBar" class="balance-fill"></div>
                 </div>
+
                 <div class="balance-legend">
                     <span>0 kW</span>
                     <span id="balanceScale">2500 kW generation</span>
                 </div>
             </div>
         </section>
-<!-- Controls for starting, pausing and resetting the simulation -->
+
+        <!-- SIMULATION CONTROL -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -110,7 +141,7 @@
             </div>
         </section>
 
-        <!-- Shows how much power comes from each renewable source -->
+        <!-- ENERGY GENERATION -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -121,7 +152,6 @@
                 <span class="unit-label">Unit: kW</span>
             </div>
 
-            <!-- Individual readings for solar, hydro and wind -->
             <div class="source-grid">
                 <article class="source-card">
                     <div class="source-icon">S</div>
@@ -130,6 +160,7 @@
                         <strong id="solarGeneration">1000 kW</strong>
                     </div>
                 </article>
+
                 <article class="source-card">
                     <div class="source-icon">H</div>
                     <div>
@@ -137,6 +168,7 @@
                         <strong id="hydroGeneration">800 kW</strong>
                     </div>
                 </article>
+
                 <article class="source-card">
                     <div class="source-icon">W</div>
                     <div>
@@ -146,7 +178,6 @@
                 </article>
             </div>
 
-            <!-- Chart for comparing the three energy sources -->
             <div class="chart-card">
                 <div class="chart-heading">
                     <div>
@@ -158,7 +189,6 @@
                     aria-label="Horizontal bar chart showing solar, hydro and wind generation"></canvas>
             </div>
 
-            <!-- Chart comparing total generation with current demand -->
             <div class="chart-card">
                 <div class="chart-heading">
                     <div>
@@ -170,7 +200,8 @@
                     aria-label="Horizontal bar chart comparing energy generation and demand"></canvas>
             </div>
         </section>
-                <!-- Follows the simulated power flow from generation to connected loads -->
+
+        <!-- POWER FLOW -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -187,34 +218,37 @@
                     <strong id="flowGeneration">2500 kW</strong>
                     <p>Solar, hydro and wind</p>
                 </div>
+
                 <div class="flow-connector"><span>↓</span></div>
+
                 <div class="flow-stage transformer-stage">
                     <span class="stage-number">02</span>
                     <h3>Transformer</h3>
                     <strong id="flowTransformer">2500 kW</strong>
                     <p>Power transfer stage</p>
                 </div>
+
                 <div class="flow-connector"><span>↓</span></div>
+
                 <div class="flow-stage distribution-stage">
                     <span class="stage-number">03</span>
                     <h3>Distribution</h3>
                     <strong id="flowDistributed">2200 kW</strong>
                     <p>Power supplied to loads</p>
                 </div>
+
                 <div class="flow-connector"><span>↓</span></div>
 
-                <!-- JavaScript adds the connected load cards here -->
-                <div class="flow-loads" id="flowLoads">
-                    <!-- Load cards are added by JavaScript -->
-                </div>
+                <div class="flow-loads" id="flowLoads"></div>
             </div>
 
             <p class="small-text flow-note">
-                This diagram represents the project's simulated power flow, not a live electrical connection.
+                This diagram represents the project's simulated power flow,
+                not a live electrical connection.
             </p>
         </section>
 
-        <!-- Summary of the power requested and supplied to connected loads -->
+        <!-- LOAD MANAGEMENT -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -224,7 +258,6 @@
                 </div>
             </div>
 
-            <!-- Quick totals for load requirements and power allocation -->
             <div class="load-summary">
                 <div>
                     <span>Total Required</span>
@@ -239,78 +272,84 @@
                     <strong id="limitedLoads">0</strong>
                 </div>
             </div>
-<!-- Compares the power each load needs with the power it receives -->
-        <div class="chart-card">
-            <div class="chart-heading">
-                <div>
-                    <h3>Required vs. Supplied by Load</h3>
-                    <p>Each pair of horizontal bars shows demand and allocation.</p>
-                </div>
-            </div>
-            <canvas id="loadAllocationChart" role="img"
-                aria-label="Horizontal bar chart comparing required and supplied power for each load"></canvas>
 
-            <!-- Explains the two values shown in the chart -->
-            <div class="chart-legend">
-                <span><i class="legend-dot required-dot"></i>Required</span>
-                <span><i class="legend-dot supplied-dot"></i>Supplied</span>
-            </div>
-        </div>
+            <div class="chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <h3>Required vs. Supplied by Load</h3>
+                        <p>Each pair of horizontal bars shows demand and allocation.</p>
+                    </div>
+                </div>
 
-        <!-- Form for adding another load to the simulation -->
-        <div class="form-card">
-            <h3>Add a New Load</h3>
-            <p class="form-description">Enter a load and its priority to include it in the simulation.</p>
+                <canvas id="loadAllocationChart" role="img"
+                    aria-label="Horizontal bar chart comparing required and supplied power for each load"></canvas>
 
-            <form id="loadForm" class="form-grid">
-                <div class="form-group">
-                    <label for="loadName">Load Name</label>
-                    <input id="loadName" type="text" placeholder="e.g. Water Pump" required maxlength="50">
+                <div class="chart-legend">
+                    <span><i class="legend-dot required-dot"></i>Required</span>
+                    <span><i class="legend-dot supplied-dot"></i>Supplied</span>
                 </div>
-                <div class="form-group">
-                    <label for="loadPower">Required Power (kW)</label>
-                    <input id="loadPower" type="number" min="1" max="100000" placeholder="e.g. 250" required>
-                </div>
-                <div class="form-group">
-                    <label for="loadPriority">Priority</label>
-                    <select id="loadPriority" required>
-                        <option value="3">3 - Critical</option>
-                        <option value="2">2 - Important</option>
-                        <option value="1">1 - Normal</option>
-                    </select>
-                </div>
-                <div class="form-button">
-                    <button type="submit">Add Load</button>
-                </div>
-            </form>
-            <p class="small-text">Priority 3 is highest; priority 1 is lowest.</p>
-        </div>
-                    <!-- Lists the loads and their current allocation status -->
-        <div class="table-card">
-            <div class="table-heading">
-                <h3>Connected Loads</h3>
-                <span id="loadCount">4 loads</span>
             </div>
-            <div class="table-scroll">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Load</th>
-                            <th>Priority</th>
-                            <th>Required</th>
-                            <th>Supplied</th>
-                            <th>Allocation</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="loadTable"></tbody>
-                </table>
+
+            <!-- ADD LOAD FORM -->
+            <div class="form-card">
+                <h3>Add a New Load</h3>
+                <p class="form-description">Enter a load and its priority to include it in the simulation.</p>
+
+                <form id="loadForm" class="form-grid">
+                    <div class="form-group">
+                        <label for="loadName">Load Name</label>
+                        <input id="loadName" type="text" placeholder="e.g. Water Pump" required maxlength="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loadPower">Required Power (kW)</label>
+                        <input id="loadPower" type="number" min="1" max="100000" placeholder="e.g. 250" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loadPriority">Priority</label>
+                        <select id="loadPriority" required>
+                            <option value="3">3 - Critical</option>
+                            <option value="2">2 - Important</option>
+                            <option value="1">1 - Normal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-button">
+                        <button type="submit">Add Load</button>
+                    </div>
+                </form>
+
+                <p class="small-text">Priority 3 is highest; priority 1 is lowest.</p>
             </div>
-        </div>
+
+            <!-- CONNECTED LOADS TABLE -->
+            <div class="table-card">
+                <div class="table-heading">
+                    <h3>Connected Loads</h3>
+                    <span id="loadCount">4 loads</span>
+                </div>
+
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Load</th>
+                                <th>Priority</th>
+                                <th>Required</th>
+                                <th>Supplied</th>
+                                <th>Allocation</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loadTable"></tbody>
+                    </table>
+                </div>
+            </div>
         </section>
 
-        <!-- Form and status panel for reporting grid faults -->
+        <!-- FAULT MANAGEMENT -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -321,9 +360,9 @@
             </div>
 
             <div class="fault-layout">
-                <!-- Select the fault type, location and severity -->
                 <div class="form-card">
                     <h3>Report a Fault</h3>
+
                     <form id="faultForm" class="form-grid one-column">
                         <div class="form-group">
                             <label for="faultType">Fault Type</label>
@@ -334,6 +373,7 @@
                                 <option value="Power Supply">Power Supply</option>
                             </select>
                         </div>
+
                         <div class="form-group">
                             <label for="faultLocation">Fault Location</label>
                             <select id="faultLocation" required>
@@ -343,6 +383,7 @@
                                 <option value="Substation D">Substation D</option>
                             </select>
                         </div>
+
                         <div class="form-group">
                             <label for="faultSeverity">Severity</label>
                             <select id="faultSeverity" required>
@@ -351,23 +392,25 @@
                                 <option value="Low">Low</option>
                             </select>
                         </div>
+
                         <button type="submit">Report and Find Route</button>
                     </form>
                 </div>
 
-                <!-- Shows the details of the currently reported fault -->
                 <div class="fault-status-card">
                     <div class="card-topline">
                         <h3>Current Fault</h3>
                         <span id="faultBadge" class="status-badge status-warning">Reported</span>
                     </div>
+
                     <p><span>Fault Type</span><strong id="currentFaultType">Transmission Line</strong></p>
                     <p><span>Location</span><strong id="currentFaultLocation">Substation B</strong></p>
                     <p><span>Severity</span><strong id="currentFaultSeverity">High</strong></p>
                 </div>
             </div>
         </section>
-<!-- Shows which repair teams are available or busy -->
+
+        <!-- REPAIR TEAMS -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -383,11 +426,13 @@
                     <p>Available for assignment</p>
                     <span class="status-badge status-good">Available</span>
                 </article>
+
                 <article class="team-card">
                     <h3>Team B</h3>
                     <p>Available for assignment</p>
                     <span class="status-badge status-good">Available</span>
                 </article>
+
                 <article class="team-card">
                     <h3>Team C</h3>
                     <p>Currently occupied</p>
@@ -395,12 +440,12 @@
                 </article>
             </div>
 
-            <!-- Displays the team and route chosen for a reported fault -->
             <div class="route-card">
                 <div class="card-topline">
                     <h3>Recommended Repair Route</h3>
                     <span id="routeStatus" class="status-badge status-neutral">Waiting</span>
                 </div>
+
                 <div class="route-details">
                     <div>
                         <span>Selected Team</span>
@@ -411,16 +456,20 @@
                         <strong id="routeDistance">--</strong>
                     </div>
                 </div>
+
                 <div class="route-path">
                     <span>Route</span>
                     <strong id="repairRoute">Report a fault to calculate the route.</strong>
                 </div>
+
                 <p class="small-text">
-                    The route uses a weighted graph and Dijkstra's Algorithm. Distances are sample values.
+                    The route uses a weighted graph and Dijkstra's Algorithm.
+                    Distances are sample values.
                 </p>
             </div>
         </section>
-        <!-- Keeps a record of actions performed during the simulation -->
+
+        <!-- ACTIVITY LOG -->
         <section class="section">
             <div class="section-heading">
                 <div>
@@ -428,19 +477,27 @@
                     <h2>Recent Activity</h2>
                     <p>Actions performed during the current simulation.</p>
                 </div>
-                <button type="button" id="clearActivity" class="button-outline button-small">Clear Log</button>
+
+                <button type="button" id="clearActivity" class="button-outline button-small">
+                    Clear Log
+                </button>
             </div>
+
             <div id="activityList" class="activity-list"></div>
         </section>
+
     </main>
 
-    <!-- Dashboard footer -->
     <footer>
         <strong>Smart Eco-Grid Management System</strong>
         <p>Energy &amp; Load Management Dashboard</p>
     </footer>
 
-    <!-- Loads the JavaScript that handles dashboard interactions -->
+    <!-- EXISTING DASHBOARD JAVASCRIPT -->
     <script src="script.js"></script>
+
+    <!-- THREE.JS 3D CITY -->
+    <script type="module" src="./3D/city.js"></script>
+
 </body>
 </html>
