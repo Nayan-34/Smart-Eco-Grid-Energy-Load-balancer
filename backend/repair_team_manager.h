@@ -34,6 +34,9 @@ public:
     // Assign nearest available team
     void assignTeam(double faultLatitude,
                     double faultLongitude);
+    // File handling
+    void saveTeamsToFile();
+    void loadTeamsFromFile();
 };
 
 #endif
