@@ -1239,3 +1239,30 @@ label {
 .map-panel:fullscreen .map-footer {
     flex-shrink: 0;
 }
+
+/* 3D City Simulation — Fill the Entire Panel */
+
+#city3D {
+    position: relative;
+    width: 100%;
+    height: 75vh;
+    min-height: 550px;
+    max-height: 900px;
+    overflow: hidden;
+    border-radius: 9px;
+    background: #101820;
+}
+
+#city3D canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Give the 3D simulation more room on smaller screens */
+@media (max-width: 760px) {
+    #city3D {
+        height: 65vh;
+        min-height: 400px;
+    }
+}
