@@ -1,23 +1,39 @@
 /* Base styles, theme colours and buttons */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+
+/* =================================
+   OPTION A: DARK NAVY + TEAL THEME
+================================= */
 
 :root {
-    --green-dark: #26352d;
-    --green: #4f7657;
-    --green-mid: #789b7d;
-    --green-light: #e7efe7;
-    --page: #f3f5f1;
-    --border: #dce3dc;
-    --muted: #6b756e;
-    --white: #ffffff;
-    --red: #a7473f;
-    --amber: #866b2b;
-    --shadow: 0 2px 8px rgba(38, 53, 45, 0.05);
+    /* OPTION A — DARK NAVY + TEAL */
+    --navy-bg: #071b26;
+    --navy-card: #102b38;
+    --navy-hover: #163b46;
+
+    --teal-primary: #00bfa5;
+    --teal-bright: #00e5cc;
+    --teal-soft: #7fffea;
+
+    --cyan-glow: #00e5ff;
+    --mint-text: #c5f5ee;
+    --border-teal: rgba(0, 229, 204, 0.25);
+
+    /* Dashboard variables */
+    --green-dark: #c5f5ee;
+    --green: #00bfa5;
+    --green-mid: #00d9bd;
+    --green-light: #163b46;
+
+    --page: #071b26;
+    --border: #244b58;
+    --muted: #a5bdca;
+    --white: #102b38;
+
+    --red: #ff6868;
+    --amber: #f5c842;
+
+    --shadow: 0 5px 22px rgba(0, 0, 0, 0.25);
 }
 
 body {
@@ -1089,5 +1105,664 @@ footer p {
 @media (max-width: 768px) {
     .city-3d-container {
         height: 380px;
+    }
+}
+
+
+/* =========================================
+   SMART ECO-GRID — NEW ENERGY TECH THEME
+   Blue + Emerald Green + Solar Yellow
+========================================= */
+
+
+/* =========================================
+   OPTION A — DARK NAVY + TEAL THEME
+========================================= */
+
+html {
+    width: 100%;
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+        radial-gradient(ellipse at 15% 5%, rgba(0, 191, 165, 0.12), transparent 35%),
+        radial-gradient(ellipse at 90% 25%, rgba(0, 229, 255, 0.08), transparent 35%),
+        #071b26;
+    color: #e6fffa;
+}
+
+/* HEADER */
+
+.main-header {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    width: 100%;
+    min-height: 300px;
+    padding: 55px 6%;
+    background: linear-gradient(110deg, #071b26, #103b49, #087f75);
+    border-bottom: 2px solid #00bfa5;
+}
+
+.main-header h1 {
+    max-width: 700px;
+    color: #ffffff;
+    font-size: clamp(27px, 4vw, 43px);
+    text-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+}
+
+.main-header .eyebrow {
+    color: #7fffea;
+}
+
+.header-subtitle {
+    color: #c5f5ee;
+}
+
+.header-status {
+    background: rgba(5, 25, 43, 0.5);
+    border-color: rgba(0, 229, 204, 0.35);
+    color: #e6fffa;
+}
+
+.live-dot {
+    background: #00e5cc;
+    box-shadow: 0 0 12px #00e5cc;
+    animation: livePulse 1.5s infinite;
+}
+
+/* HEADER GLOW */
+
+.main-header::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 170px;
+    height: 170px;
+    right: 15%;
+    top: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #7fffea 0%, #00bfa5 35%, transparent 72%);
+    opacity: 0.65;
+    filter: blur(4px);
+    animation: solarPulse 4s ease-in-out infinite;
+}
+
+@keyframes solarPulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* DASHBOARD */
+
+.dashboard {
+    width: 94%;
+    max-width: 1800px;
+    margin: 28px auto;
+}
+
+.section {
+    background: linear-gradient(145deg, #102b38, #0b222e);
+    border: 1px solid #24505a;
+    border-radius: 14px;
+    box-shadow: 0 5px 22px rgba(0, 0, 0, 0.25);
+    padding: 27px;
+    margin-bottom: 25px;
+}
+
+.section-heading h2,
+.section h3,
+.table-heading h3 {
+    color: #e6fffa;
+}
+
+.section-heading > div > p:last-child,
+.metric-label,
+.metric-note,
+.small-text,
+.form-description,
+.chart-heading p,
+.source-card p,
+.team-card p {
+    color: #a5bdca;
+}
+
+.eyebrow {
+    color: #00d9bd;
+}
+
+/* NOTICE */
+
+.notice {
+    background: #123c45;
+    color: #e6fffa;
+    border-color: #247568;
+    border-left-color: #00e5cc;
+}
+
+/* CARDS */
+
+.metric-card,
+.source-card,
+.flow-load-card,
+.load-summary > div,
+.team-card,
+.balance-panel,
+.simulation-panel,
+.chart-card,
+.form-card,
+.table-card,
+.fault-status-card,
+.route-card {
+    background: #153541;
+    border-color: #285663;
+    color: #e6fffa;
+    border-radius: 11px;
+}
+
+.metric-card {
+    border-top: 3px solid #00bfa5;
+}
+
+.metric-card:nth-child(2) {
+    border-top-color: #00e5ff;
+}
+
+.metric-card:nth-child(3) {
+    border-top-color: #7fffea;
+}
+
+.metric-card:nth-child(4) {
+    border-top-color: #42b8a9;
+}
+
+.metric-value,
+.source-card strong {
+    color: #ffffff;
+}
+
+.status-text,
+.flow-stage strong,
+.flow-load-card strong {
+    color: #00e5cc;
+}
+
+/* BALANCE */
+
+.balance-track {
+    background: #254653;
+}
+
+.balance-fill {
+    background: linear-gradient(90deg, #087fbd, #00bfa5, #7fffea);
+}
+
+.balance-panel {
+    background: #102b38;
+}
+
+/* STATUS */
+
+.status-good {
+    background: rgba(0, 191, 165, 0.15);
+    color: #7fffea;
+}
+
+.status-warning {
+    background: rgba(245, 200, 66, 0.16);
+    color: #ffdc73;
+}
+
+.status-danger {
+    background: rgba(255, 104, 104, 0.16);
+    color: #ff9292;
+}
+
+.status-neutral {
+    background: #244653;
+    color: #d4e9f5;
+}
+
+/* BUTTONS */
+
+button {
+    background: linear-gradient(110deg, #087f75, #00bfa5);
+    border: 1px solid #00e5cc;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+button:hover:not(:disabled) {
+    background: linear-gradient(110deg, #00a890, #00d9bd);
+    box-shadow: 0 0 17px rgba(0, 229, 204, 0.25);
+}
+
+.button-secondary {
+    background: #204a55;
+    color: #dffbf5;
+    border-color: #34718d;
+}
+
+.button-outline {
+    background: transparent;
+    color: #7fffea;
+    border-color: #00bfa5;
+}
+
+/* RENEWABLE SOURCE ICONS */
+
+.source-icon {
+    background: rgba(0, 191, 165, 0.15);
+    color: #7fffea;
+    border: 1px solid rgba(0, 229, 204, 0.3);
+}
+
+/* CHARTS */
+
+.chart-card canvas {
+    background: #0b222e;
+    border: 1px solid #285663;
+}
+
+.required-dot {
+    background: #00bfa5;
+}
+
+.supplied-dot {
+    background: #00e5cc;
+}
+
+/* POWER FLOW */
+
+.flow-stage {
+    background: #153b48;
+    border-color: #2b6980;
+    border-left-color: #00e5cc;
+}
+
+.flow-stage p,
+.flow-load-card p {
+    color: #a5bdca;
+}
+
+.stage-number,
+.flow-connector {
+    color: #00e5cc;
+}
+
+/* FORMS */
+
+.form-group label {
+    color: #e6fffa;
+}
+
+.form-group input,
+.form-group select {
+    background: #0c2633;
+    border: 1px solid #386078;
+    color: #ffffff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #00bfa5;
+    outline: 2px solid rgba(0, 191, 165, 0.2);
+}
+
+/* TABLE */
+
+table {
+    background: #102b38;
+    color: #e6fffa;
+}
+
+th {
+    background: #1b4653;
+    color: #7fffea;
+}
+
+td {
+    border-bottom-color: #294b57;
+    color: #dcecf5;
+}
+
+tbody tr:hover {
+    background: #1b4050;
+}
+
+.allocation-track {
+    background: #294a5c;
+}
+
+.allocation-fill {
+    background: linear-gradient(90deg, #087fbd, #00bfa5);
+}
+
+/* FAULT AND REPAIR */
+
+.fault-status-card {
+    border-left-color: #00e5cc;
+}
+
+.fault-status-card > p,
+.activity-item {
+    border-bottom-color: #29485c;
+}
+
+.fault-status-card > p span,
+.route-details span,
+.route-path > span {
+    color: #a5bdca;
+}
+
+.route-details > div {
+    background: #102b38;
+    border-color: #31556a;
+}
+
+.route-details strong,
+.route-path strong {
+    color: #e6fffa;
+}
+
+.route-path {
+    background: #153d48;
+}
+
+.team-card.selected-team {
+    border-color: #00bfa5;
+    box-shadow: 0 0 0 2px rgba(0, 191, 165, 0.15);
+}
+
+/* ACTIVITY */
+
+.activity-item strong {
+    color: #e6fffa;
+}
+
+.activity-item p,
+.empty-activity {
+    color: #a5bdca;
+}
+
+.activity-dot {
+    background: #00e5cc;
+    box-shadow: 0 0 9px rgba(0, 229, 204, 0.5);
+}
+
+/* GRID MAP LINK */
+
+.map-page-link {
+    background: #153c48;
+    color: #7fffea;
+    border-color: #34718d;
+}
+
+.map-page-link:hover {
+    background: #087f75;
+    color: #ffffff;
+    border-color: #00bfa5;
+}
+
+/* 3D CITY */
+
+.city-3d-container {
+    width: 100%;
+    max-width: 100%;
+    height: min(78vh, 900px);
+    min-height: 550px;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    background: #071b26;
+    border: 1px solid #28718a;
+    box-shadow: 0 0 25px rgba(0, 229, 204, 0.12);
+}
+
+.city-3d-container canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.city-legend {
+    color: #d8eaf3;
+}
+
+/* FOOTER */
+
+footer {
+    width: 100%;
+    background: linear-gradient(100deg, #071b26, #104b55, #087f75);
+    border-top: 2px solid #00bfa5;
+    color: #ffffff;
+}
+
+/* HOVER */
+
+.metric-card:hover,
+.source-card:hover,
+.chart-card:hover,
+.flow-stage:hover,
+.flow-load-card:hover,
+.form-card:hover,
+.table-card:hover,
+.fault-status-card:hover,
+.team-card:hover,
+.route-card:hover,
+.balance-panel:hover,
+.simulation-panel:hover {
+    transform: translateY(-3px);
+    border-color: #00bfa5;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+    .main-header {
+        min-height: 350px;
+        padding: 35px 6%;
+        align-items: flex-start;
+    }
+
+    .main-header::before {
+        width: 115px;
+        height: 115px;
+        right: 12%;
+        top: 205px;
+    }
+
+    .header-status {
+        position: absolute !important;
+        top: 20px;
+        right: 5%;
+    }
+
+    .dashboard {
+        width: 96%;
+    }
+
+    .section {
+        padding: 17px;
+    }
+
+    .city-3d-container {
+        height: 65vh;
+        min-height: 400px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .main-header::before,
+    .live-dot {
+        animation: none !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =================================
+   3D RENEWABLE ENERGY HEADER
+================================= */
+
+.main-header {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+    max-width: 650px;
+}
+
+.header-energy-scene {
+    position: absolute;
+    right: 15%;
+    top: 15px;
+    width: 330px;
+    height: 260px;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.header-energy-scene canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.header-status {
+    position: relative;
+    z-index: 3;
+}
+
+/* Smaller screens */
+
+@media (max-width: 900px) {
+    .header-energy-scene {
+        right: 2%;
+        width: 230px;
+        height: 200px;
+        opacity: 0.7;
+    }
+
+    .header-content {
+        max-width: 65%;
+    }
+}
+
+@media (max-width: 600px) {
+    .header-energy-scene {
+        right: 0;
+        top: 110px;
+        width: 155px;
+        height: 145px;
+        opacity: 0.55;
+    }
+
+    .header-content {
+        max-width: 100%;
+    }
+
+    .main-header h1 {
+        max-width: 85%;
+    }
+}
+
+/* =====================================
+   CINEMATIC 3D RENEWABLE ENERGY HEADER
+===================================== */
+
+.main-header {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 540px;
+    display: flex;
+    align-items: center;
+    padding: 55px 6%;
+    background:
+        radial-gradient(circle at 75% 40%, #164b55, transparent 40%),
+        linear-gradient(110deg, #071b26, #102f3d);
+    border-bottom: 2px solid #00bfa5;
+}
+
+#hero3D {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+#hero3D canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    width: 48%;
+    max-width: 650px;
+}
+
+.hero-content h1 {
+    color: #ffffff;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.15;
+    margin: 15px 0;
+    text-shadow: 0 3px 18px rgba(0,0,0,0.5);
+}
+
+.hero-content .eyebrow {
+    color: #7fffea;
+    letter-spacing: 3px;
+}
+
+.hero-content .header-subtitle {
+    color: #c5f5ee;
+    font-size: 15px;
+    max-width: 450px;
+}
+
+.hero-content .header-status {
+    display: inline-flex;
+    margin-top: 22px;
+}
+
+@media(max-width: 700px) {
+    .main-header {
+        min-height: 550px;
+        padding: 35px 6%;
+    }
+
+    .hero-content {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .hero-content h1 {
+        font-size: 30px;
     }
 }
