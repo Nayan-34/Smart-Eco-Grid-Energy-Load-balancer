@@ -2,6 +2,7 @@
 // Frontend prototype using simulated data.
 
 // ------ Initial Data -----
+import gsap from "gsap";
 
 const initialLoads = [
     { name: "Hospital", power: 800, priority: 3 },
@@ -876,6 +877,17 @@ function renderTeams(selectedTeamName) {
 }
 // -------------------- Recent Activity --------------------
 
+// Animate newly added activity items
+function animateActivity(item) {
+    gsap.from(item, {
+        opacity: 0,
+        x: -25,
+        duration: 0.5,
+        ease: "power2.out"
+    });
+}
+
+
 function addActivity(title, description) {
     const activityList = getElement("activityList");
 
@@ -905,6 +917,7 @@ function addActivity(title, description) {
     item.append(dot, content);
 
     activityList.prepend(item);
+    animateActivity(item);
 
     // Keep the latest eight activity entries.
     while (activityList.children.length > 8) {
@@ -1099,3 +1112,31 @@ function initializeDashboard() {
 }
 
 initializeDashboard();
+
+// GSAP DASHBOARD ENTRANCE ANIMATION
+
+function animateDashboardEntrance() {
+    const sections = document.querySelectorAll(".dashboard > section");
+
+    gsap.set(sections, {
+        opacity: 1,
+        y: 0
+    });
+
+    gsap.from(sections, {
+        y: 20,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: "power2.out",
+        clearProps: "transform"
+    });
+
+    gsap.from(".main-header h1", {
+        y: -20,
+        duration: 0.8,
+        ease: "power2.out",
+        clearProps: "transform"
+    });
+}
+
+animateDashboardEntrance();
