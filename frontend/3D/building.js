@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 
 export function createBuilding(
@@ -11,18 +12,39 @@ export function createBuilding(
 ) {
   const group = new THREE.Group();
 
+  // =====================================================
+  // 1. MATERIALS
+  // =====================================================
+
   const mainMaterial = new THREE.MeshStandardMaterial({
     color: color,
     roughness: 0.8
   });
 
   const darkMaterial = new THREE.MeshStandardMaterial({
-    color: 0x424b55
+    color: 0x263b46,
+    roughness: 0.7
   });
 
   const whiteMaterial = new THREE.MeshStandardMaterial({
     color: 0xe8e8e8
   });
+
+  const tealAccent = new THREE.MeshStandardMaterial({
+    color: 0x00bfa5,
+    emissive: 0x003d38,
+    emissiveIntensity: 0.8,
+    metalness: 0.3,
+    roughness: 0.5
+  });
+
+  const tealWindow = new THREE.MeshBasicMaterial({
+    color: 0x7fffea
+  });
+
+  // =====================================================
+  // 2. HELPER FUNCTIONS
+  // =====================================================
 
   function addBox(w, h, d, px, py, pz, material) {
     const mesh = new THREE.Mesh(
@@ -35,7 +57,10 @@ export function createBuilding(
     return mesh;
   }
 
-  function addCylinder(radiusTop, radiusBottom, h, px, py, pz, material) {
+  function addCylinder(
+    radiusTop, radiusBottom, h,
+    px, py, pz, material
+  ) {
     const mesh = new THREE.Mesh(
       new THREE.CylinderGeometry(
         radiusTop,
@@ -51,24 +76,26 @@ export function createBuilding(
     return mesh;
   }
 
-  // Facility foundation
+  // =====================================================
+  // 3. FACILITY FOUNDATION
+  // =====================================================
+
   addBox(13, 0.6, 13, 0, 0, 0, darkMaterial);
 
-  // Main facility structures
+  // =====================================================
+  // 4. MAIN FACILITY STRUCTURES
+  // =====================================================
+
   switch (type) {
 
     case 'solar':
       addBox(8, height, 8, 0, height / 2 + 0.3, 0, mainMaterial);
 
-      // Solar panel structures
+      // Solar panels
       for (let i = -1; i <= 1; i++) {
         const panel = addBox(
-          3,
-          0.25,
-          2,
-          i * 3,
-          height + 1,
-          6,
+          3, 0.25, 2,
+          i * 3, height + 1, 6,
           new THREE.MeshStandardMaterial({
             color: 0x174a87,
             metalness: 0.3
@@ -78,7 +105,7 @@ export function createBuilding(
         panel.rotation.x = -0.2;
       }
 
-      // Small control tower
+      // Control tower
       addBox(2, 4, 2, 4, 2.3, -4, whiteMaterial);
       break;
 
@@ -96,7 +123,7 @@ export function createBuilding(
     case 'wind':
       addBox(7, 5, 7, 0, 2.8, 0, mainMaterial);
 
-      // Three simplified wind turbines
+      // Wind turbines
       for (const px of [-4, 0, 4]) {
         addCylinder(
           0.25, 0.4, 8,
@@ -143,7 +170,7 @@ export function createBuilding(
       addBox(9, height, 9, 0, height / 2 + 0.3, 0, whiteMaterial);
       addBox(10, 1, 10, 0, height + 0.8, 0, mainMaterial);
 
-      // Red medical cross
+      // Medical cross
       addBox(3, 0.7, 0.5, 0, height + 2.5, 4.8, mainMaterial);
       addBox(0.7, 3, 0.5, 0, height + 2.5, 4.8, mainMaterial);
 
@@ -169,17 +196,17 @@ export function createBuilding(
       addBox(7, 4, 7, 0, height + 2.5, 0, whiteMaterial);
       addBox(12, 0.5, 10, 0, height + 4.7, 0, darkMaterial);
 
-      // Front entrance
+      // Entrance
       addBox(3, 4, 0.5, 0, 2.3, 4.8, darkMaterial);
       break;
 
     case 'residential':
-      // Three residential towers
+      // Residential towers
       addBox(3.5, height, 4, -3, height / 2 + 0.3, 0, mainMaterial);
       addBox(3.5, height - 2, 4, 2, (height - 2) / 2 + 0.3, 0, whiteMaterial);
       addBox(3.5, height - 3, 4, 0, (height - 3) / 2 + 0.3, -4, mainMaterial);
 
-      // Roofs
+      // Roof
       addBox(4, 0.5, 4.5, -3, height + 0.6, 0, darkMaterial);
       break;
 
@@ -187,7 +214,7 @@ export function createBuilding(
       addBox(11, height, 9, 0, height / 2 + 0.3, 0, mainMaterial);
       addBox(12, 0.7, 10, 0, height + 0.7, 0, darkMaterial);
 
-      // Glass-like shop front
+      // Glass shop front
       addBox(
         8, 3, 0.25,
         0, 2.5, 4.6,
@@ -214,29 +241,88 @@ export function createBuilding(
       addBox(8, height, 8, 0, height / 2 + 0.3, 0, mainMaterial);
   }
 
-  // Facility label
-const canvas = document.createElement('canvas');
-canvas.width = 1024;
-canvas.height = 256;
+  // =====================================================
+  // 5. GLOWING WINDOWS
+  // =====================================================
+
+  if (
+    type !== 'wind' &&
+    type !== 'substation' &&
+    type !== 'residential'
+  ) {
+    const windowRows = Math.min(
+      3,
+      Math.floor((height - 1) / 3)
+    );
+
+    for (let row = 0; row < windowRows; row++) {
+      for (const wx of [-3, 0, 3]) {
+        const windowMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(1.1, 1.3, 0.15),
+          tealWindow
+        );
+
+        windowMesh.position.set(
+          wx,
+          2.5 + row * 3,
+          4.65
+        );
+
+        group.add(windowMesh);
+      }
+    }
+  }
+
+  // =====================================================
+  // 6. TEAL ARCHITECTURAL ACCENTS
+  // =====================================================
+
+  if (type !== 'wind') {
+    // Roof trim
+    const roofTrim = new THREE.Mesh(
+      new THREE.BoxGeometry(10, 0.18, 0.18),
+      tealAccent
+    );
+
+    roofTrim.position.set(0, height + 1.2, 4.7);
+    group.add(roofTrim);
+
+    // Entrance highlight
+    const entranceHighlight = new THREE.Mesh(
+      new THREE.BoxGeometry(3.5, 0.15, 0.2),
+      tealAccent
+    );
+
+    entranceHighlight.position.set(0, 0.35, 4.95);
+    group.add(entranceHighlight);
+  }
+
+  // =====================================================
+  // 7. FACILITY LABEL
+  // =====================================================
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 256;
 
   const context = canvas.getContext('2d');
 
-  context.fillStyle = 'rgba(15, 23, 42, 0.9)';
+  context.fillStyle = 'rgba(7, 27, 38, 0.95)';
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  context.strokeStyle = '#00e5ff';
+  context.strokeStyle = '#00d9c0';
   context.lineWidth = 5;
   context.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
 
   context.fillStyle = '#ffffff';
   context.font = 'bold 64px Arial';
-context.textAlign = 'center';
-context.textBaseline = 'middle';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
 
-context.shadowColor = '#000000';
-context.shadowBlur = 8;
+  context.shadowColor = '#00bfa5';
+  context.shadowBlur = 8;
 
-context.fillText(label, 512, 128, 960);
+  context.fillText(label, 512, 128, 960);
 
   const texture = new THREE.CanvasTexture(canvas);
 
@@ -247,18 +333,22 @@ context.fillText(label, 512, 128, 960);
   });
 
   const labelSprite = new THREE.Sprite(labelMaterial);
+
   labelSprite.scale.set(17, 4.25, 1);
-labelSprite.material.sizeAttenuation = true;
+  labelSprite.material.sizeAttenuation = true;
   labelSprite.position.set(0, height + 5, 0);
 
   group.add(labelSprite);
 
- group.position.set(x, -0.5, z);
+  // =====================================================
+  // 8. FINAL POSITION AND SCALE
+  // =====================================================
 
-// Increase the size of the main facilities
-group.scale.set(1.5, 1.5, 1.5);
+  group.position.set(x, -0.5, z);
 
-scene.add(group);
+  group.scale.set(1.5, 1.5, 1.5);
 
-return group;
+  scene.add(group);
+
+  return group;
 }

@@ -1,30 +1,28 @@
-
 import * as THREE from 'three';
 import { createBuilding } from './building.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const cityContainer = document.getElementById('city3D');
 
 if (!cityContainer) {
-  throw new Error("3D container with id 'city3D' not found");
+    throw new Error("3D container with id 'city3D' not found");
 }
 
-// =====================================================
-// 1. SCENE AND CAMERA
-// =====================================================
-
+// 1. CREATE SCENE FIRST
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x101820);
-scene.fog = new THREE.Fog(0x101820, 300, 500);
+scene.background = new THREE.Color(0x071b26);
+scene.fog = new THREE.Fog(0x071b26, 300, 500);
 
+// 2. THEN CREATE CAMERA
 const camera = new THREE.PerspectiveCamera(
-  45,
-  cityContainer.clientWidth / cityContainer.clientHeight,
-  0.1,
-  1000
+    25,
+    cityContainer.clientWidth / cityContainer.clientHeight,
+    0.1,
+    1000
 );
 
-camera.position.set(150, 150, 175);
+camera.position.set(70, 75, 85);
 camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({
@@ -43,18 +41,44 @@ cityContainer.appendChild(renderer.domElement);
 
 const loadingMessage = document.getElementById('cityLoading');
 if (loadingMessage) loadingMessage.remove();
+renderer.domElement.style.width = "100%";
+renderer.domElement.style.height = "100%";
+renderer.domElement.style.display = "block";
+
+const controls = new OrbitControls(camera, renderer.domElement);
+
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+
+controls.minDistance = 20;
+controls.maxDistance = 250;
+
+controls.enableZoom = true;
+controls.target.set(0, 0, 0);
+controls.update();
 
 // =====================================================
-// 2. LIGHTING
+// 2. LIGHTING - SMART CITY THEME
 // =====================================================
 
+// Ambient teal-blue lighting
 scene.add(
-  new THREE.HemisphereLight(0xffffff, 0x607080, 2)
+  new THREE.HemisphereLight(
+    0x9eece5,
+    0x102b32,
+    1.8
+  )
 );
 
-const sunlight = new THREE.DirectionalLight(0xffffff, 1.5);
+// Main city light
+const sunlight = new THREE.DirectionalLight(0xc5f5ee, 1.5);
 sunlight.position.set(70, 100, 50);
 scene.add(sunlight);
+
+// Soft teal fill light
+const tealLight = new THREE.PointLight(0x00d9c0, 1.2, 180);
+tealLight.position.set(0, 45, 0);
+scene.add(tealLight);
 
 // =====================================================
 // 3. MATERIALS
@@ -62,33 +86,35 @@ scene.add(sunlight);
 
 const materials = {
   ground: new THREE.MeshStandardMaterial({
-    color: 0x718568,
+    color: 0x173c3b,
     roughness: 1
   }),
 
   road: new THREE.MeshStandardMaterial({
-    color: 0x303943
+    color: 0x202f3b,
+    roughness: 0.9
   }),
 
   sidewalk: new THREE.MeshStandardMaterial({
-    color: 0xb8b9ad
+    color: 0x526d70,
+    roughness: 0.9
   }),
 
   marking: new THREE.MeshBasicMaterial({
-    color: 0xf5d76e
+    color: 0x9cebdc
   }),
 
   park: new THREE.MeshStandardMaterial({
-    color: 0x477d4d
+    color: 0x245e50,
+    roughness: 1
   }),
 
   wire: new THREE.LineBasicMaterial({
     color: 0x00e5ff,
     transparent: true,
-    opacity: 0.9
+    opacity: 0.95
   })
 };
-
 
 // =====================================================
 // 5. ROAD SYSTEM
@@ -295,6 +321,7 @@ Object.values(nodes).forEach(node => {
   );
 });
 
+
 // =====================================================
 // 8. ELECTRICAL GRID CONNECTIONS
 // =====================================================
@@ -335,10 +362,7 @@ function createPowerLine(from, to) {
     curve.getPoints(20)
   );
 
-  const line = new THREE.Line(
-    geometry,
-    materials.wire
-  );
+  const line = new THREE.Line(geometry, materials.wire);
 
   scene.add(line);
 }
@@ -347,148 +371,12 @@ connections.forEach(([from, to]) => {
   createPowerLine(from, to);
 });
 
-// =====================================================
-// 9. RESIDENTIAL HOUSES
-// =====================================================
-
-const houseColors = [
-  0xd8c7ad,
-  0xe5d5bd,
-  0xc4d5d9,
-  0xd9b9a7,
-  0xb8c6b1,
-  0xd5d0c5
-];
-
-const roofColors = [
-  0x555b65,
-  0x765c50,
-  0x8b6d54,
-  0x424b55
-];
-
+// Shared glowing window material
 const windowMaterial = new THREE.MeshBasicMaterial({
-  color: 0x8ed7ec
+  color: 0x42d9ff,
+  transparent: true,
+  opacity: 0.9
 });
-
-function createSmallBuilding(
-  x, z, width, depth, height, color, roofColor
-) {
-  const group = new THREE.Group();
-
-  // House walls
-  const walls = new THREE.Mesh(
-    new THREE.BoxGeometry(width, height, depth),
-    new THREE.MeshStandardMaterial({ color })
-  );
-
-  walls.position.y = height / 2;
-  group.add(walls);
-
-  // Roof
-  const roof = new THREE.Mesh(
-    new THREE.ConeGeometry(
-      Math.max(width, depth) * 0.72,
-      2.5,
-      4
-    ),
-    new THREE.MeshStandardMaterial({
-      color: roofColor
-    })
-  );
-
-  roof.position.y = height + 1;
-  roof.rotation.y = Math.PI / 4;
-  group.add(roof);
-
-  // Front windows
-  for (const wx of [-width / 4, width / 4]) {
-    const windowMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(0.9, 1, 0.12),
-      windowMaterial
-    );
-
-    windowMesh.position.set(
-      wx,
-      height * 0.55,
-      depth / 2 + 0.07
-    );
-
-    group.add(windowMesh);
-  }
-
-  // Front door
-  const door = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 2, 0.15),
-    new THREE.MeshStandardMaterial({
-      color: 0x65452f
-    })
-  );
-
-  door.position.set(
-    0,
-    1,
-    depth / 2 + 0.08
-  );
-
-  group.add(door);
-
-  group.position.set(x, -0.55, z);
-  scene.add(group);
-
-  return group;
-}
-
-// Avoid electrical facilities
-function isNearGridNode(x, z) {
-  return Object.values(nodes).some(node =>
-    Math.abs(x - node.x) < 13 &&
-    Math.abs(z - node.z) < 13
-  );
-}
-
-// Avoid road corridors
-function isNearRoad(x, z) {
-  return (
-    horizontalRoads.some(
-      roadZ => Math.abs(z - roadZ) < 8
-    ) ||
-    verticalRoads.some(
-      roadX => Math.abs(x - roadX) < 8
-    )
-  );
-}
-
-// Fill remaining city blocks
-function fillResidentialArea() {
-  let index = 0;
-
-  for (let x = -85; x <= 85; x += 10) {
-    for (let z = -85; z <= 85; z += 10) {
-
-      if (isNearRoad(x, z)) continue;
-      if (isNearGridNode(x, z)) continue;
-
-      const width = 5 + (index % 3);
-      const depth = 5 + ((index + 1) % 3);
-      const height = 5 + (index % 4) * 1.5;
-
-      createSmallBuilding(
-        x,
-        z,
-        width,
-        depth,
-        height,
-        houseColors[index % houseColors.length],
-        roofColors[index % roofColors.length]
-      );
-
-      index++;
-    }
-  }
-}
-
-fillResidentialArea();
 
 // =====================================================
 // 10. APARTMENT BUILDINGS
@@ -730,16 +618,23 @@ function animateTraffic() {
 function animate() {
   requestAnimationFrame(animate);
 
+  // Moving traffic
   animateTraffic();
 
+  // Update camera controls
+  controls.update();
+
+  // Render city
   renderer.render(scene, camera);
 }
 
 animate();
 
+
 // =====================================================
 // 16. RESPONSIVE RESIZE
 // =====================================================
+
 function resizeCity() {
   const width = cityContainer.clientWidth;
   const height = cityContainer.clientHeight;
