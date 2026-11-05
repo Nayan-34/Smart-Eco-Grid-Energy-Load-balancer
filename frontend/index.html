@@ -9,19 +9,29 @@
 </head>
 <body>
 
-    <header class="main-header">
-        <div>
-            <p class="eyebrow">POWER GRID MONITORING</p>
-            <h1>Smart Eco-Grid Management System</h1>
-            <p class="header-subtitle">
-                Energy monitoring, load management and fault handling
-            </p>
-        </div>
+   <header class="main-header">
+
+    <!-- 3D animated background -->
+    <div id="hero3D"></div>
+
+    <!-- Header content -->
+    <div class="hero-content">
+        <p class="eyebrow">SMART ENERGY • SMART FUTURE</p>
+
+        <h1>SMART ECO-GRID<br>MANAGEMENT SYSTEM</h1>
+
+        <p class="header-subtitle">
+            Renewable Energy | Intelligent Load Balancing |
+            Fault Detection
+        </p>
+
         <div class="header-status">
             <span class="live-dot"></span>
-            <span>Simulation Mode</span>
+            System Simulation Active
         </div>
-    </header>
+    </div>
+
+</header>
 
     <a href="map.html" class="map-page-link">View Grid Map</a>
 
@@ -493,11 +503,11 @@
         <p>Energy &amp; Load Management Dashboard</p>
     </footer>
 
-    <!-- EXISTING DASHBOARD JAVASCRIPT -->
-    <script src="script.js"></script>
-
-    <!-- THREE.JS 3D CITY -->
-    <script type="module" src="./3D/city.js"></script>
+   <!-- DASHBOARD JAVASCRIPT WITH GSAP -->
+<script type="module" src="./script.js"></script>
+<script type="module" src="./3D/city.js"></script>
+<script type="module" src="./3D/header-energy.js"></script>
+<script type="module" src="./hero.js"></script>
 
 </body>
 </html>
