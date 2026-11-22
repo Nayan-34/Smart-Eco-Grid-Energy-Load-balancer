@@ -1,7 +1,5 @@
-
 #ifndef ENERGY_LOAD_H
 #define ENERGY_LOAD_H
-
 #include <iostream>
 #include <string>
 using namespace std;
@@ -35,7 +33,7 @@ public:
     double maxBatteryDischargeRate;
     double totalAvailablePower_kW;
 
-    GridNode(double incoming_kW, double capacity_kWh,
+    GridNode(double incoming_kW , double capacity_kWh ,
              double maxDischarge_kW = 1000.0);
 };
 
@@ -54,5 +52,4 @@ public:
     void addConsumer(const Consumer& c);
     void processGrid(GridNode& grid);
 };
-
 #endif
