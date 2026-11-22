@@ -1,4 +1,3 @@
-
 #include "energy_load.h"
 
 double allocatePower(double availablePower, double requiredPower)
@@ -14,13 +13,13 @@ double allocatePower(double availablePower, double requiredPower)
 
 Consumer::Consumer()
 {
-    id = "";
+    id = " ";
     priority = LOW;
     powerRequired = 0;
     powerAllocated = 0;
 }
 
-Consumer::Consumer(string id, PriorityLevel priority, double powerRequired)
+Consumer::Consumer(string id , PriorityLevel priority , double powerRequired)
 {
     this->id = id;
     this->priority = priority;
@@ -28,7 +27,7 @@ Consumer::Consumer(string id, PriorityLevel priority, double powerRequired)
     powerAllocated = 0;
 }
 
-GridNode::GridNode(double incoming_kW, double capacity_kWh,
+GridNode::GridNode(double incoming_kW , double capacity_kWh ,
                    double maxDischarge_kW)
 {
     incomingPower = incoming_kW;
