@@ -1,4 +1,3 @@
-
 #include "repair_team_manager.h"
 #include <cmath>
 #include <cfloat>
@@ -6,8 +5,6 @@
 #include <sstream>
 
 using namespace std;
-
-// Default constructor
 RepairTeam::RepairTeam()
 {
     id = 0;
@@ -18,10 +15,7 @@ RepairTeam::RepairTeam()
     nodeId = -1;
 }
 
-// Parameterized constructor
-RepairTeam::RepairTeam(int id, string name,
-                       double latitude, double longitude,
-                       int nodeId)
+RepairTeam::RepairTeam(int id, string name , double latitude , double longitude , int nodeId)
 {
     this->id = id;
     this->name = name;
@@ -88,11 +82,7 @@ void RepairTeamManager::showTeams()
 }
 
 // Select nearest team and calculate shortest route
-DijkstraResult RepairTeamManager::assignTeam(
-    double faultLatitude,
-    double faultLongitude,
-    int faultNodeId,
-    const vector<vector<GraphEdge>>& graph)
+DijkstraResult RepairTeamManager::assignTeam(double faultLatitude , double faultLongitude , int faultNodeId , const vector<vector<GraphEdge>>& graph)
 {
     DijkstraResult result = {false, 0, {}, "", -1};
     int selectedTeam = -1;
@@ -133,10 +123,7 @@ DijkstraResult RepairTeamManager::assignTeam(
     // Validate graph node IDs
     int startNode = teams[selectedTeam].nodeId;
 
-    if (startNode < 0 ||
-        startNode >= static_cast<int>(graph.size()) ||
-        faultNodeId < 0 ||
-        faultNodeId >= static_cast<int>(graph.size()))
+    if (startNode < 0 || startNode >= static_cast<int>(graph.size()) || faultNodeId < 0 || faultNodeId >= static_cast<int>(graph.size()))
     {
         cout << "\nInvalid repair team or fault graph node."
              << endl;
