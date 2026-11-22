@@ -177,7 +177,6 @@ void FaultManager::saveFaultsToFile()
     file.close();
 }
 
-
 // Load Faults from File
 void FaultManager::loadFaultsFromFile()
 {
@@ -185,12 +184,10 @@ void FaultManager::loadFaultsFromFile()
 
     if (!file)
     {
-        // File does not exist yet
         return;
     }
 
     faults.clear();
-
     string line;
 
     while (getline(file, line))
@@ -226,12 +223,10 @@ void FaultManager::loadFaultsFromFile()
             stod(latitude),
             stod(longitude)
         );
-
         fault.severity = severity;
         fault.active = stoi(active);
 
         faults.push_back(fault);
     }
-
     file.close();
 }
