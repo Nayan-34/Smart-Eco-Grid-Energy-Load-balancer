@@ -1,5 +1,5 @@
+
 #include "repair_team_manager.h"
-#include "route_optimizer.h"
 #include <cmath>
 #include <cfloat>
 #include <fstream>
@@ -7,6 +7,7 @@
 
 using namespace std;
 
+// Default constructor
 RepairTeam::RepairTeam()
 {
     id = 0;
@@ -14,43 +15,58 @@ RepairTeam::RepairTeam()
     available = true;
     latitude = 0;
     longitude = 0;
+    nodeId = -1;
 }
 
-
+// Parameterized constructor
 RepairTeam::RepairTeam(int id, string name,
-                       double latitude, double longitude)
+                       double latitude, double longitude,
+                       int nodeId)
 {
     this->id = id;
     this->name = name;
     this->latitude = latitude;
     this->longitude = longitude;
+    this->nodeId = nodeId;
     available = true;
 }
 
+// Manager constructor
 RepairTeamManager::RepairTeamManager()
 {
     teamSize = 0;
     teams = new RepairTeam[5];
 }
 
+// Get number of teams
+int RepairTeamManager::getTeamCount() const
+{
+    return teamSize;
+}
+
+// Add repair team
 void RepairTeamManager::addTeam(RepairTeam team)
 {
     if (teamSize < 5)
     {
         teams[teamSize] = team;
         teamSize++;
+
         cout << "Repair team added successfully." << endl;
+
         saveTeamsToFile();
     }
-     else
+    else
     {
         cout << "Maximum number of teams reached." << endl;
     }
 }
 
+// Display teams
 void RepairTeamManager::showTeams()
 {
     cout << "\n--- Repair Teams ---" << endl;
+
     if (teamSize == 0)
     {
         cout << "No repair teams available." << endl;
@@ -63,21 +79,26 @@ void RepairTeamManager::showTeams()
         cout << "Name      : " << teams[i].name << endl;
         cout << "Latitude  : " << teams[i].latitude << endl;
         cout << "Longitude : " << teams[i].longitude << endl;
+        cout << "Graph Node: N" << teams[i].nodeId << endl;
 
-        if (teams[i].available)
-            cout << " | Available" << endl;
-        else
-            cout << " | Busy" << endl;
+        cout << "Status    : "
+             << (teams[i].available ? "Available" : "Busy")
+             << endl;
     }
 }
 
-void RepairTeamManager::assignTeam(double faultLatitude,
-                                  double faultLongitud)
+// Select nearest team and calculate shortest route
+DijkstraResult RepairTeamManager::assignTeam(
+    double faultLatitude,
+    double faultLongitude,
+    int faultNodeId,
+    const vector<vector<GraphEdge>>& graph)
 {
+    DijkstraResult result = {false, 0, {}, "", -1};
     int selectedTeam = -1;
     double shortestDistance = DBL_MAX;
 
-    // Find the nearest available repair team
+    // Find nearest available team
     for (int i = 0; i < teamSize; i++)
     {
         if (teams[i].available)
@@ -88,7 +109,6 @@ void RepairTeamManager::assignTeam(double faultLatitude,
             double lonDifference =
                 teams[i].longitude - faultLongitude;
 
-            // Calculate approximate distance
             double distance =
                 sqrt(latDifference * latDifference +
                      lonDifference * lonDifference);
@@ -103,17 +123,49 @@ void RepairTeamManager::assignTeam(double faultLatitude,
             }
         }
     }
-    // Check if any team is available
+
     if (selectedTeam == -1)
     {
         cout << "\nNo repair team available." << endl;
-        return;
+        return result;
     }
-    // Mark selected team as busy
+
+    // Validate graph node IDs
+    int startNode = teams[selectedTeam].nodeId;
+
+    if (startNode < 0 ||
+        startNode >= static_cast<int>(graph.size()) ||
+        faultNodeId < 0 ||
+        faultNodeId >= static_cast<int>(graph.size()))
+    {
+        cout << "\nInvalid repair team or fault graph node."
+             << endl;
+        return result;
+    }
+
+    // Calculate shortest route using Dijkstra
+    RouteOptimizer route;
+
+    result = route.findShortestPath(
+        static_cast<int>(graph.size()),
+        graph,
+        startNode,
+        faultNodeId
+    );
+
+    if (!result.success)
+    {
+        cout << "\nNo route available to the faulty substation."
+             << endl;
+        return result;
+    }
+
+    // Mark selected team as busy only after finding a route
     teams[selectedTeam].available = false;
     saveTeamsToFile();
-    
-    cout << "\n--- Team Assignment ---" << endl;
+result.selectedTeamName = teams[selectedTeam].name;
+result.selectedTeamId = teams[selectedTeam].id;
+    cout << "\n--- Repair Team Assignment ---" << endl;
 
     cout << "Selected Team   : "
          << teams[selectedTeam].name << endl;
@@ -121,40 +173,42 @@ void RepairTeamManager::assignTeam(double faultLatitude,
     cout << "Team ID         : "
          << teams[selectedTeam].id << endl;
 
-    cout << "Team Latitude   : "
-         << teams[selectedTeam].latitude << endl;
+    cout << "Starting Node   : N"
+         << startNode << endl;
 
-    cout << "Team Longitude  : "
-         << teams[selectedTeam].longitude << endl;
-
-    cout << "Fault Latitude  : "
-         << faultLatitude << endl;
-
-    cout << "Fault Longitude : "
-         << faultLongitude << endl;
+    cout << "Fault Node      : N"
+         << faultNodeId << endl;
 
     cout << "Nearest Distance: "
          << shortestDistance << endl;
 
-    // Pass team and fault coordinates to RouteOptimizer
-    RouteOptimizer route;
+    cout << "\n--- Optimized Repair Route ---" << endl;
 
-    route.findShortestRoute(
-        teams[selectedTeam].latitude,
-        teams[selectedTeam].longitude,
-        faultLatitude,
-        faultLongitude
-    );
+    for (size_t i = 0; i < result.path.size(); i++)
+    {
+        cout << "N" << result.path[i];
+
+        if (i + 1 < result.path.size())
+            cout << " -> ";
+    }
+
+    cout << "\nTotal Route Cost: "
+         << result.totalDistance << endl;
+
+    cout << "\nRepair team assigned successfully."
+         << endl;
+
+    return result;
 }
-// Save Repair Teams to File
+
+// Save teams
 void RepairTeamManager::saveTeamsToFile()
 {
     ofstream file("repair_teams.txt");
 
     if (!file)
     {
-        cout << "\nError: Unable to open repair_teams.txt"
-             << endl;
+        cout << "Error opening repair_teams.txt" << endl;
         return;
     }
 
@@ -164,24 +218,21 @@ void RepairTeamManager::saveTeamsToFile()
              << teams[i].name << "|"
              << teams[i].available << "|"
              << teams[i].latitude << "|"
-             << teams[i].longitude
+             << teams[i].longitude << "|"
+             << teams[i].nodeId
              << endl;
     }
 
     file.close();
 }
 
-
-// Load Repair Teams from File
+// Load teams
 void RepairTeamManager::loadTeamsFromFile()
 {
     ifstream file("repair_teams.txt");
 
     if (!file)
-    {
-        // File does not exist yet
         return;
-    }
 
     teamSize = 0;
 
@@ -191,25 +242,37 @@ void RepairTeamManager::loadTeamsFromFile()
     {
         stringstream ss(line);
 
-        string id;
-        string name;
-        string available;
-        string latitude;
-        string longitude;
+        string id, name, available;
+        string latitude, longitude, nodeId;
 
         getline(ss, id, '|');
         getline(ss, name, '|');
         getline(ss, available, '|');
         getline(ss, latitude, '|');
         getline(ss, longitude, '|');
+        getline(ss, nodeId, '|');
 
-        teams[teamSize].id = stoi(id);
-        teams[teamSize].name = name;
-        teams[teamSize].available = stoi(available);
-        teams[teamSize].latitude = stod(latitude);
-        teams[teamSize].longitude = stod(longitude);
+        try
+        {
+            RepairTeam team;
 
-        teamSize++;
+            team.id = stoi(id);
+            team.name = name;
+            team.available = (stoi(available) != 0);
+            team.latitude = stod(latitude);
+            team.longitude = stod(longitude);
+
+            // Old records without node IDs need updating
+            team.nodeId = nodeId.empty() ? -1 : stoi(nodeId);
+
+            teams[teamSize] = team;
+            teamSize++;
+        }
+        catch (...)
+        {
+            cout << "Invalid repair team record skipped."
+                 << endl;
+        }
     }
 
     file.close();

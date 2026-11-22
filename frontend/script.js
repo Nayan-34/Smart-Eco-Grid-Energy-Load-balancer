@@ -41,6 +41,52 @@ function getElement(id) {
     return document.getElementById(id);
 }
 
+// -------------------- C++ Backend Integration --------------------
+
+let backendData = null;
+
+async function loadBackendData() {
+    try {
+        const response = await fetch("/backend_output.json");
+
+        if (!response.ok) {
+            throw new Error("Backend JSON could not be loaded");
+        }
+
+        backendData = await response.json();
+        // Update fault information
+setText("currentFaultLocation", backendData.faultLocation);
+
+// Update allocated power
+setText("totalSupplied", backendData.totalAllocatedPower + " kW");
+
+// Update repair route
+const nodeNames = {
+    0: "Power Plant (N0)",
+    1: "Metro Hospital (N1)",
+    3: "Water Plant (N3)"
+};
+
+if (backendData.routeAvailable) {
+    const route = backendData.shortestPathNodes
+        .map(node => nodeNames[node] || "N" + node);
+
+    setText("routeStatus", "Route Found");
+    setText("routeDistance", backendData.shortestPathDistance + " km");
+    setText("repairRoute", route.join(" → "));
+} else {
+    setText("routeStatus", "Unavailable");
+    setText("routeDistance", "--");
+    setText("repairRoute", "No route found");
+}
+
+        console.log("C++ Backend Data:", backendData);
+
+    } catch (error) {
+        console.error("Backend connection error:", error);
+    }
+}
+
 function setText(id, value) {
     const element = getElement(id);
 
@@ -1110,6 +1156,7 @@ function initializeDashboard() {
         "Sample generation and load information has been loaded."
     );
 }
+loadBackendData();
 
 initializeDashboard();
 

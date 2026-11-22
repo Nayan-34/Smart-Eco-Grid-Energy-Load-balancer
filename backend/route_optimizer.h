@@ -14,6 +14,8 @@ struct DijkstraResult
     bool success;
     double totalDistance;
     std::vector<int> path;
+    string selectedTeamName;
+int selectedTeamId;
 };
 
 class RouteOptimizer

@@ -1,0 +1,11 @@
+{
+    "faultLocation": "Substation B",
+    "routeAvailable": true,
+    "shortestPathDistance": 9.0,
+    "shortestPathNodes": [
+        5,
+        6,
+        3
+    ],
+    "totalAllocatedPower": 700.0
+}

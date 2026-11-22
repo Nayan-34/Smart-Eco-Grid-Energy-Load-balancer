@@ -1,0 +1,4 @@
+1|Substation B|1|185|80|30.3165|78.0322|High|1
+2|Substation C|2|220|120|30.325|78.04|Medium|1
+1|Substation B|1|185|80|30.3165|78.0322|High|1
+2|Substation C|2|220|120|30.325|78.04|Medium|1
