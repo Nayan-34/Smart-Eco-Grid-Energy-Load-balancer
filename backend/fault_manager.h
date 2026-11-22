@@ -27,9 +27,9 @@ public:
     string severity;
     bool active;
 
-    Fault(int id, string location, FaultType type,
-          double voltage, double load, double latitude, double longitude);
-    
+    Fault(int id , string location , FaultType type ,
+          double voltage , double load , double latitude , double longitude);
+
     void setSeverity();
 };
 
@@ -38,8 +38,9 @@ class FaultManager
 private:
     vector<Fault> faults;
 public:
-    void checkFault(int id, string location,
-                    double voltage, double load, double latitude, double longitude);
+    void checkFault(int id , string location,
+                    double voltage , double load , double latitude , double longitude);
+
     void showFaults();
     void resolveFault(int faultId);
 
@@ -47,4 +48,5 @@ public:
     void saveFaultsToFile();
     void loadFaultsFromFile();
 };
+
 #endif
