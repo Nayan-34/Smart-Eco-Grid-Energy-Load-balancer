@@ -1,4 +1,3 @@
-
 #ifndef REPAIR_TEAM_MANAGER_H
 #define REPAIR_TEAM_MANAGER_H
 
@@ -8,7 +7,6 @@
 #include "route_optimizer.h"
 
 using namespace std;
-
 class RepairTeam
 {
 public:
@@ -21,9 +19,7 @@ public:
 
     RepairTeam();
 
-    RepairTeam(int id, string name,
-               double latitude, double longitude,
-               int nodeId = -1);
+    RepairTeam(int id , string name , double latitude , double longitude , int nodeId = -1);
 };
 
 class RepairTeamManager
@@ -40,12 +36,7 @@ public:
 
     int getTeamCount() const;
 
-    DijkstraResult assignTeam(
-        double faultLatitude,
-        double faultLongitude,
-        int faultNodeId,
-        const vector<vector<GraphEdge>>& graph
-    );
+    DijkstraResult assignTeam(double faultLatitude , double faultLongitude , int faultNodeId , const vector<vector<GraphEdge>>& graph);
 
     void saveTeamsToFile();
     void loadTeamsFromFile();
